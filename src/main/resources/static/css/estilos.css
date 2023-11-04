@@ -1,0 +1,22 @@
+@charset "UTF-8";
+body{
+    margin: 0 auto;
+    background-image: url(../ima/fondo-web.jpeg);
+    background-position: center center;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+form .error {
+  color: #ff0000;
+}
+
+footer{
+	position: fixed;
+	bottom: 0;
+	height: 60px;
+}
+
+main{
+	margin-bottom: 60px;
+}
