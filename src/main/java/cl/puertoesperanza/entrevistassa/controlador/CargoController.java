@@ -3,6 +3,7 @@ package cl.puertoesperanza.entrevistassa.controlador;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ public class CargoController {
 	@Autowired 
 	private EntrevistadoService entrevistadoServicio;
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping
 	public ModelAndView listaCargos() 
 	{
@@ -37,6 +39,7 @@ public class CargoController {
 		return modelAndView;
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/crear")
 	public ModelAndView crearCargo() 
 	{
@@ -45,6 +48,7 @@ public class CargoController {
 		return modelAndView;
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/procesar")
 	public ModelAndView procesarCargo(
 			@RequestParam String txtNombre
@@ -74,6 +78,7 @@ public class CargoController {
 		return modelAndView;
 	}
 	
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/editar/{idcargo}")
 	public ModelAndView editarCargo(@PathVariable Integer idcargo) 
 	{
@@ -86,6 +91,7 @@ public class CargoController {
 		return modelAndView;
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/guardar")
 	public ModelAndView guardarCargo(
 			@RequestParam String txtNombre,
@@ -118,6 +124,7 @@ public class CargoController {
 		return modelAndView;
 	}
 
+	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/eliminar")
 	public ModelAndView eliminarCargo(
 			@RequestParam Integer idCargo

@@ -60,7 +60,9 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout">Salir</a>
+						<form name="frmsalir" th:action="@{/logout}" method="POST">
+						</form>
+                        <a class="nav-link" href="#" onclick="menusalir()">Salir</a>
                     </li>
                 </ul>
             </div>
@@ -71,7 +73,7 @@
             <div class="col-12">
                 <div class="jumbotron">
                     <h1 class="display-4">Sistema de gestión de entrevistas</h1>
-                    <p class="lead">Bienvenido <span th:text="${mensaje}" th:remove="tag"></span> al sistema de gestión de entrevistas</p>
+                    <p class="lead">Bienvenido <span th:text="${username}" th:remove="tag"></span> al sistema de gestión de entrevistas</p>
                     <hr class="my-0">
                     <p>Acceso rápido</p>
                     <p class="lead">
@@ -102,7 +104,7 @@
         </div>
     </main>
     <footer class="container-fluid text-center p-3 bg-dark text-light">
-        &copy; 2022 - Sistema creado para Sales Action 
+        &copy; 2023 - Sistema creado para Sales Action 
     </footer>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -110,6 +112,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script th:src="@{/js/menu.js}"></script>
     <script th:src="@{/js/graficos.js}"></script>
   </body>
 </html>
