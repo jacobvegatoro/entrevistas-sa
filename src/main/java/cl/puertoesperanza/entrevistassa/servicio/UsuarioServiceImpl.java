@@ -19,4 +19,26 @@ public class UsuarioServiceImpl implements UsuarioService {
 		return usuarioRepository.findAll();
 	}
 
+	@Override
+	public User crearUsuario(User usuario) {
+		return usuarioRepository.save(usuario);
+	}
+
+	@Override
+	public User obtenerUsuarioPorNombre(String username) {
+		return usuarioRepository.findById(username).orElse(null);
+	}
+
+	@Override
+	public boolean eliminarUsuario(String username) {
+		boolean resultado = false;
+		try {
+			usuarioRepository.deleteById(username);
+			resultado = true;
+		}catch(Exception e) {
+			System.out.println("Error al eliminar el usuario con ID: " + username);
+		}
+		return resultado;
+	}
+
 }

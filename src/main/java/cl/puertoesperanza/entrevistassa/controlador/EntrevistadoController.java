@@ -19,6 +19,8 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 //import org.springframework.security.core.Authentication;
 //import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -202,13 +204,13 @@ public class EntrevistadoController {
 
 		System.out.println("Lista de entrevistados agregada al modelo");
 
-		/*
+		String roluser = "ROLE_USER";
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
 			roluser = "ROLE_ADMIN";
 		}
-		*/
-		String roluser = "ROLE_ADMIN";
+		
 		modelAndView.addObject("roluser",roluser);
 
 		return modelAndView;
@@ -253,13 +255,11 @@ public class EntrevistadoController {
 
 		System.out.println("Lista de entrevistados agregada al modelo");
 
-		/*Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String roluser = "";
+		String roluser = "ROLE_USER";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
 			roluser = "ROLE_ADMIN";
 		}
-		modelAndView.addObject("roluser",roluser);*/
-		String roluser = "ROLE_ADMIN";
 		modelAndView.addObject("roluser",roluser);
 
 		return modelAndView;
@@ -381,16 +381,13 @@ public class EntrevistadoController {
 		
 		System.out.println("Listado de entrevistas enviado a la vista");
 
-		/*
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String roluser = "";
+		String roluser = "ROLE_USER";
 		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
 			roluser = "ROLE_ADMIN";
 		}
 		modelAndView.addObject("roluser",roluser);
-		*/
-		String roluser = "ROLE_ADMIN";
-		modelAndView.addObject("roluser",roluser);
+		
 		return modelAndView;
 	}
 	
@@ -452,15 +449,12 @@ public class EntrevistadoController {
 		
 		System.out.println("Listado de entrevistas enviado a la vista");
 
-		/*
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String roluser = "";
+		String roluser = "ROLE_USER";
 		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
 			roluser = "ROLE_ADMIN";
 		}
-		modelAndView.addObject("roluser",roluser);
-		*/
-		String roluser = "ROLE_ADMIN";
 		modelAndView.addObject("roluser",roluser);
 		
 		return modelAndView;
@@ -3086,12 +3080,12 @@ public class EntrevistadoController {
 		List<Entrevistado> listaentrevistados = new ArrayList<Entrevistado>();
 		listaentrevistados = entrevistadoServicio.getPage(p-1, this.paginacion);
 
-		/*Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String roluser = "ROLE_USER";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
 			roluser = "ROLE_ADMIN";
-		}*/
+		}
 		
-		String roluser = "ROLE_ADMIN";
 		modelAndView.addObject("roluser",roluser);
 
 		modelAndView.addObject("nombres","");

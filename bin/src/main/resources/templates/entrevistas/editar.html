@@ -1,0 +1,679 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Plataforma de administración de entrevistas</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" th:href="@{/ima/icon-admin.png}" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link th:href="@{/css/estilos.css}" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="container bg-dark">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a class="navbar-brand" href="/inicio">Sales Action</a>
+            <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/inicio">Inicio <span class="sr-only">(actual)</span></a>
+                    </li>
+                    <!--<li class="nav-item active">
+                        <a class="nav-link" href="/entrevistas">Listado</a>
+                    </li>-->
+                    <li class="nav-item active dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Listado</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="/entrevistas/listadobusqueda">Búsqueda</a>
+                            <a class="dropdown-item" href="/entrevistas/listadoexportar">Exportar</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Registro</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="/entrevistas/registro">Único</a>
+                            <a class="dropdown-item" href="/entrevistas/cargamasiva">Masivo</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actualización</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="/entrevistas/actmasiva">Validados</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mantenedores</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="/clientes">Clientes</a>
+                            <a class="dropdown-item" href="/reclutadores">Reclutadores</a>
+                            <a class="dropdown-item" href="/instalaciones">Instalaciones</a>
+                            <a class="dropdown-item" href="/cargos">Cargos</a>
+                            <a class="dropdown-item" href="/nacionalidades">Nacionalidades</a>
+                            <a class="dropdown-item" href="/estados">Estados</a>
+                            <a class="dropdown-item" href="/usuarios">Usuarios</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Salir</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class="container px-4 pb-4 bg-white">
+        <div class="row">
+            <div class="col-12">
+                <div class="jumbotron">
+                    <h1 class="display-4">Edición de entrevistas</h1>
+                    <p class="lead">Actualización de los datos de una entrevista en el sistema</p>
+                    <hr class="my-0">
+                </div>
+            </div>
+        </div>
+        <div class="row" th:if="${mensaje != ''}">
+        	<div class="col-md-12">
+				<div th:if="${tipoMensaje == 'Ok'}" class="alert alert-success" role="alert">
+				  <span th:text="${mensaje}"></span>
+				</div>
+				<div th:if="${tipoMensaje == 'Error'}" class="alert alert-danger" role="alert">
+				  <span th:text="${mensaje}"></span>
+				</div>
+        	</div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+
+                <form th:action="@{/entrevistas/procesa}" method="post" 
+                th:object="${entrevistado}" name="frmeditaentrevistado">
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <h3>Datos básicos</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="id">Identificador</label>
+                            <input type="text" class="form-control" id="idEntrevistado" 
+                            name="idEntrevistado" th:field="*{idEntrevistado}" 
+                            readonly="readonly">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtFecha">Fecha de ingreso</label>
+                            <input type="date" class="form-control" 
+                            id="txtFechaIngreso" name="txtFechaIngreso" 
+                            th:value="${fechaIngresoStr}" 
+                            readonly="readonly" 
+                            >
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="reclutador">Reclutador (*)</label>
+                            <select name="reclutador" id="reclutador" class="form-control"
+                            th:field="*{reclutador.id}"
+                           	>
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="rcl : ${reclutadores}" 
+                                	th:value="${rcl.id}" 
+                                	th:text="${rcl.nombreReclutador}"
+                                	th:selected="(${rcl.id} == ${entrevistado.reclutador.id})" 
+                                	/>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="run">RUN (*)</label>
+                            <input type="text" class="form-control" th:field="*{run}"
+                            id="run" name="run" aria-describedby="runAyuda">
+                            <!-- <small id="runAyuda" class="form-text text-muted">Ingresa el RUN sin puntos y con guion.</small>  -->
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="cliente">Cliente (*)</label>
+                            <select name="cliente" id="cliente" class="form-control" 
+                            th:field="*{cliente.id}"
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="cli : ${clientes}" 
+                                	th:value="${cli.id}" 
+                                	th:text="${cli.nombreCliente}" 
+                                	th:selected="(${cli.id} == ${entrevistado.cliente.id})" 
+                                	/>
+                            </select>
+                        </div>      
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="nombres">Nombres (*)</label>
+                            <input type="text" class="form-control" id="nombres" 
+                            name="nombres" th:field="*{nombres}">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="apPaterno">Apellido Paterno (*)</label>
+                            <input type="text" class="form-control" id="apPaterno" 
+                            name="apPaterno" th:field="*{apPaterno}">
+                        </div>    
+                        <div class="form-group col-md-4">
+                            <label for="apMaterno">Apellido Materno</label>
+                            <input type="text" class="form-control" id="apMaterno" 
+                            name="apMaterno" th:field="*{apMaterno}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="correoElectronico">Correo electrónico</label>
+                            <input type="text" class="form-control" 
+                            id="correoElectronico" name="correoElectronico" 
+                            th:field="*{correoElectronico}">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="telefono">Teléfono</label>
+                            <input type="text" class="form-control" id="telefono" 
+                            name="telefono" th:field="*{telefono}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="observacionRegistro">Observación registro</label>
+                            <textarea name="observacionRegistro" id="observacionRegistro" 
+                            class="form-control" th:field="*{observacionRegistro}"></textarea>
+                        </div>
+                    </div>                    
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <h3>Datos complementarios</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="empresa">Empresa</label>
+                            <input type="text" class="form-control" 
+                            id="empresa" name="empresa" th:field="*{empresa}"
+                            >
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="validado">Validado</label>
+                            <select name="validado" id="validado" 
+                            class="form-control" th:field="*{validado}" 
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="vld : ${validados}" 
+                                	th:value="${vld.id}" 
+                                	th:text="${vld.estadoValidado}" 
+                                	th:selected="(${vld.id} == ${entrevistado.validado})"                                 	
+                                	/>                                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="txtFechaEstado">Fecha estado</label>
+                            <input type="date" name="txtFechaEstado" 
+                            id="txtFechaEstado" class="form-control" 
+                            th:value="${fechaEstadoStr}" 
+                            >
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="estado">Estado</label>
+                            <select name="slcEstado" id="slcEstado" 
+                            class="form-control" 
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="est : ${estados}" 
+                                	th:value="${est.id}" 
+                                	th:text="${est.detalleEstado}" 
+                                	th:selected="(${est.id} == ${idestadoselec})"                                 	
+                                	/>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="instalacion">Instalación</label>
+                            <select name="slcInstalacion" id="slcInstalacion" 
+                            class="form-control" 
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="insta : ${instalaciones}" 
+                                	th:value="${insta.id}" 
+                                	th:text="${insta.nombreInstalacion}" 
+                                	th:selected="(${insta.id} == ${idinstalacionselec})" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="cargo">Cargo (*)</label>
+                            <select name="cargo" id="cargo" class="form-control" 
+                            th:field="*{cargo.id}"
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="crg : ${cargos}" 
+                                	th:value="${crg.id}" 
+                                	th:text="${crg.nombreCargo}" 
+                                	th:selected="(${crg.id} == ${entrevistado.cargo.id})"                                 	
+                                	/>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="slcRegion">Región (*)</label>
+                            <select name="slcRegion" id="slcRegion" class="form-control">
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="region : ${regiones}" 
+                                	th:value="${region.id}" 
+                                	th:text="${region.nombreRegion}"
+                                	th:selected="(${region.id} == ${idregionselec})"                                 	
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="slcComuna">Comuna (*)</label>
+                            <select name="slcComuna" id="slcComuna" class="form-control">
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="comuna : ${listacomunas}" 
+                                	th:value="${comuna.id}" 
+                                	th:text="${comuna.nombreComuna}"
+                                	th:selected="(${comuna.id} == ${idcomunaselec})"                                 	
+                                	/>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="periodo">Periodo Contrato</label>
+                            <select name="periodo" id="periodo" 
+                            class="form-control" th:field="*{periodo}">
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="per : ${periodos}" 
+                                	th:value="${per.id}" 
+                                	th:text="${per.detallePeriodo}" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="tipoServicio">Tipo de servicio</label>
+                            <select name="tipoServicio" id="tipoServicio" 
+                            class="form-control" th:field="*{tipoServicio}">
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="ser : ${servicios}" 
+                                	th:value="${ser.id}" 
+                                	th:text="${ser.detalleServicio}" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtFechaContratacion">Fecha de contratación</label>
+                            <input type="date" class="form-control" 
+                            id="txtFechaContratacion" name="txtFechaContratacion"
+                            th:value="${fechaContratacionStr}" 
+                            >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="observacionComplementaria">Observaciones sección complementaria</label>
+                            <textarea name="observacionComplementaria" 
+                            id="observacionComplementaria"  
+                            th:field="*{observacionComplementaria}"
+                            class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <h3>Datos de contacto</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="canal">Canal (*)</label>
+                            <select name="canal" id="canal" class="form-control" 
+                            th:field="*{canal.id}"
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="cnl : ${canales}" 
+                                	th:value="${cnl.id}" 
+                                	th:text="${cnl.nombreCanal}" 
+                                	th:selected="(${cnl.id} == ${entrevistado.canal.id})"                                 	
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="slcContactado">Contactado</label>
+                            <select name="slcContactado" id="slcContactado" 
+                            class="form-control" th:field="*{contactado}" 
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="con : ${contactados}" 
+                                	th:value="${con.id}" 
+                                	th:text="${con.estadoContactado}" 
+                                	/>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="slcSePresenta">Se presenta</label>
+                            <select name="slcSePresenta" id="slcSePresenta" 
+                            class="form-control" th:field="*{presentacion}" 
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="pre : ${presentaciones}" 
+                                	th:value="${pre.id}" 
+                                	th:text="${pre.estadoPresentacion}" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="entrevistador">Entrevistador</label>
+                            <select name="slcEntrevistador" id="slcEntrevistador" 
+                            class="form-control" 
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="entrev : ${entrevistadores}" 
+                                	th:value="${entrev.id}" 
+                                	th:text="${entrev.nombreEntrevistador}" 
+                                	th:selected="(${entrev.id} == ${identrevistadorselec})" 
+                                	/>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <label for="observacionContacto">Observación contacto</label>
+                            <textarea name="observacionContacto" 
+                            id="observacionContacto" 
+                            th:field="*{observacionContacto}"
+                            class="form-control"></textarea>
+                        </div>
+                    </div>                    
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <h3>Datos personales</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="slcSePresenta">Nacionalidad</label>
+                            <select name="slcNacionalidad" id="slcNacionalidad" 
+                            class="form-control" th:field="*{nacionalidad}" 
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="nac : ${nacionalidades}" 
+                                	th:value="${nac.id}" 
+                                	th:text="${nac.detalleNacionalidad}" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtFechaNacimiento">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" 
+                            id="txtFechaNacimiento" name="txtFechaNacimiento" 
+                            th:value="${fechaNacimientoStr}" 
+                            >
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtEdad">Edad</label>
+                            <input type="text" class="form-control" 
+                            id="txtEdad" name="txtEdad" readonly="readonly" 
+                            th:value="${edadStr}" 
+                            >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="txtDireccion">Dirección</label>
+                            <input type="text" class="form-control"  
+                            id="txtDireccion" name="txtDireccion" 
+                            th:field="*{direccion}" 
+                            >
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtCiudad">Ciudad</label>
+                            <input type="text" class="form-control" 
+                            id="txtCiudad" name="txtCiudad"
+                            th:field="*{ciudad}" 
+                            >
+                        </div>
+                        <div class="form-group col-md-2">
+                            <label for="txtNumeroCasa">Número Casa</label>
+                            <input type="text" class="form-control" 
+                            id="txtNumeroCasa" name="txtNumeroCasa"
+                            th:field="*{numeroDireccion}" 
+                            >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="slcPrevision">Previsión</label>
+                            <select name="slcPrevision" id="slcPrevision" 
+                            class="form-control" th:field="*{prevision}" 
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="pre : ${previsiones}" 
+                                	th:value="${pre.id}" 
+                                	th:text="${pre.detallePrevision}" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="slcSalud">Salud</label>
+                            <select name="slcSalud" id="slcSalud" 
+                            class="form-control" th:field="*{salud}"  >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="sal : ${saludes}" 
+                                	th:value="${sal.id}" 
+                                	th:text="${sal.detalleSalud}" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="slcSeguroCovid">Seguro COVID</label>
+                            <select name="slcSeguroCovid" id="slcSeguroCovid" 
+                            class="form-control" th:field="*{seguroCovid}" >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="sc : ${seguroscovid}" 
+                                	th:value="${sc.id}" 
+                                	th:text="${sc.estadoSeguro}" 
+                                	/>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="slcTipoCuenta">Tipo de cuenta bancaria</label>
+                            <select name="slcTipoCuenta" id="slcTipoCuenta" 
+                            class="form-control" th:field="*{tipoCuenta}" >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="tc : ${tiposcuenta}" 
+                                	th:value="${tc.id}" 
+                                	th:text="${tc.detalleTipo}" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="slcBanco">Banco</label>
+                            <select name="slcBanco" id="slcBanco" 
+                            class="form-control" th:field="*{bancoCuenta}" >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="bnc : ${bancos}" 
+                                	th:value="${bnc.id}" 
+                                	th:text="${bnc.nombreBanco}" 
+                                	/>
+
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtNumeroCuenta">Número cuenta</label>
+                            <input type="text" class="form-control" 
+                            id="txtNumeroCuenta" name="txtNumeroCuenta" 
+                            th:field="*{numeroCuenta}"
+                            >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-3">
+                            <label for="txtTallaCalzado">Calzado</label>
+                            <input type="text" class="form-control" 
+                            id="txtTallaCalzado" name="txtTallaCalzado" 
+                            th:field="*{calzado}">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="slcTallaPolera">Polera</label>
+                            <select name="slcTallaPolera" id="slcTallaPolera" 
+                            class="form-control" th:field="*{polera}">
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="tll : ${tallas}" 
+                                	th:value="${tll.id}" 
+                                	th:text="${tll.nombreTalla}" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="slcTallaPoleron">Polerón</label>
+                            <select name="slcTallaPoleron" id="slcTallaPoleron" 
+                            class="form-control" th:field="*{poleron}">
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="tll : ${tallas}" 
+                                	th:value="${tll.id}" 
+                                	th:text="${tll.nombreTalla}" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="slcTallaPantalon">Pantalón</label>
+                            <select name="slcTallaPantalon" id="slcTallaPantalon" 
+                            class="form-control" th:field="*{pantalon}">
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="tll : ${tallas}" 
+                                	th:value="${tll.id}" 
+                                	th:text="${tll.nombreTalla}" 
+                                	/>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <h3>Datos de contacto de emergencia</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="txtNombreEmergencia">Nombre</label>
+                            <input type="text" class="form-control" 
+                            id="txtNombreEmergencia" name="txtNombreEmergencia" 
+                            th:field="*{nombreContacto}"
+                            >
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtTelefonoEmergencia">Teléfono</label>
+                            <input type="text" class="form-control" 
+                            id="txtTelefonoEmergencia" name="txtTelefonoEmergencia" 
+                            th:field="*{telefonoContacto}" 
+                            >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="slcParentezcoEmergencia">Parentesco</label>
+                            <select name="slcParentezcoEmergencia" 
+                            id="slcParentezcoEmergencia" class="form-control" 
+                            th:field="*{parentezcoContacto}" 
+                            >
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="prt : ${parentescos}" 
+                                	th:value="${prt.id}" 
+                                	th:text="${prt.nombreParentesco}" 
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-8">
+                            <label for="txtDireccionEmergencia">Dirección</label>
+                            <input type="text" class="form-control" 
+                            id="txtDireccionEmergencia" name="txtDireccionEmergencia" 
+                            th:field="*{direccionContacto}" 
+                            >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label for="slcRegionEmergencia">Región</label>
+                            <select name="slcRegionEmergencia" id="slcRegionEmergencia" 
+                            class="form-control">
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="region : ${regiones}" 
+                                	th:value="${region.id}" 
+                                	th:text="${region.nombreRegion}"
+                                	th:selected="(${region.id} == ${idregcontactoselec})"                                 	
+                                	/>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="slcComunaEmergencia">Comuna</label>
+                            <select name="slcComunaEmergencia" id="slcComunaEmergencia" 
+                            class="form-control">
+                                <option value="">Selecciona una opción</option>
+                                <option th:each="com : ${listacomcontacto}" 
+                                	th:value="${com.id}" 
+                                	th:text="${com.nombreComuna}"
+                                	th:selected="(${com.id} == ${idcomcontactoselec})"                                 	
+                                	/>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <hr>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-12">
+                            <label>Los campos marcados con (*) son obligatorios</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-12">
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </div>
+                  </form>
+            </div>
+        </div>
+    </main>
+    <footer class="container-fluid text-center p-3 bg-dark text-light">
+        &copy; 2022 - Sistema creado para Sales Action 
+    </footer>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+    <script th:src="@{/js/jquery.Rut.js}"></script>
+    <script th:src="@{/js/edicion.js}"></script>
+  </body>
+</html>

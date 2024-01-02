@@ -235,7 +235,7 @@
                             <button type="button" class="btn btn-sm btn-danger botonEliminar" 
                             	data-toggle="modal" data-target="#deleteModal" 
                             	th:data-id="${entrevista.idEntrevistado}"
-                            	th:if="${roluser != ''}" 
+                            	th:if="${roluser == 'ROLE_ADMIN'}" 
                             	>
                                 Eliminar
                             </button>

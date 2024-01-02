@@ -1,0 +1,47 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Sales Action">
+    <title>Plataforma de administración de entrevistas</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <!-- Favicons -->
+    <link rel="shortcut icon" th:href="@{/ima/icon-admin.png}" type="image/x-icon">
+
+    <meta name="theme-color" content="#563d7c">
+
+    <!-- Custom styles for this template -->
+    <link th:href="@{/css/login.css}" rel="stylesheet" />
+</head>
+
+<body class="text-center">
+
+    <form class="form-signin bg-white" th:action="@{/acceso}" method="post">
+        <h1 class="h3 mb-3 font-weight-normal">Bienvenido</h1>
+        <br>
+		<div class="alert alert-danger" role="alert" th:if="${param.error}">
+			Verifica las credenciales
+		</div>
+		<label for="email" class="sr-only">Correo electrónico</label>
+        <input type="text" id="email" name="email" class="form-control" placeholder="Correo electrónico" required autofocus>
+        <br>
+        <label for="password" class="sr-only">Clave</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Clave" required>
+        <div class="checkbox mb-3 pt-4">
+            <label>
+                <input type="checkbox" value="remember-me"> Mantener sesión
+            </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
+        <p class="mt-5 mb-3 text-muted">&copy; 2022 - Sales Action</p>
+    </form>
+
+</body>
+
+</html>
