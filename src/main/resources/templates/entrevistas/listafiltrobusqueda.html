@@ -57,7 +57,9 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout">Salir</a>
+						<form name="frmsalir" th:action="@{/logout}" method="POST">
+						</form>
+                        <a class="nav-link" href="#" onclick="menusalir()">Salir</a>
                     </li>
                 </ul>
             </div>
@@ -164,7 +166,7 @@
                             <button type="button" class="btn btn-sm btn-danger botonEliminar" 
                             	data-toggle="modal" data-target="#deleteModal" 
                             	th:data-id="${entrevista.idEntrevistado}"
-                            	th:if="${roluser != ''}"
+                            	th:if="${roluser == 'ROLE_ADMIN'}"
                             	>
                                 Eliminar
                             </button>
@@ -205,13 +207,14 @@
         </div>
     </main>
     <footer class="container-fluid text-center p-3 bg-dark text-light">
-        &copy; 2022 - Sistema creado para Sales Action 
+        &copy; 2024 - Sistema creado para Sales Action 
     </footer>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script th:src="@{/js/menu.js}"></script>
     <script th:src="@{/js/entrevistas/listado.js}"></script>
   </body>
 </html>

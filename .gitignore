@@ -1,5 +1,6 @@
 HELP.md
 target/
+bin/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -34,4 +35,5 @@ build/
 
 ### Otros ###
 *.properties
-/bin/
+**/.DS_Store
+.DS_Store

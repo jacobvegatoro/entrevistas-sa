@@ -24,9 +24,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/inicio">Inicio <span class="sr-only">(actual)</span></a>
                     </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="/entrevistas">Listado</a>
-                    </li> -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Listado</a>
                         <div class="dropdown-menu" aria-labelledby="dropdownId">
@@ -60,7 +57,9 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout">Salir</a>
+						<form name="frmsalir" th:action="@{/logout}" method="POST">
+						</form>
+                        <a class="nav-link" href="#" onclick="menusalir()">Salir</a>
                     </li>
                 </ul>
             </div>
@@ -91,32 +90,10 @@
 				<h3>Modificar datos generales</h3>
                 <form th:action="@{/usuarios/guardar}" method="post" name="frmusuario">
                     <div class="row">
-                        <div class="form-group col-md-4">
-                            <label for="txtId">Identificador</label>
-                            <input type="text" class="form-control" id="txtId" 
-                            name="txtId" readonly="readonly" th:value="${usuario.id}">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="txtNombres">Nombres (*)</label>
-                            <input type="text" class="form-control" id="txtNombres" 
-                            name="txtNombres" th:value="${usuario.name}">
-                        </div>
-                        <div class="form-group col-md-4">
-                            <label for="txtApellidos">Apellidos (*)</label>
-                            <input type="text" class="form-control" id="txtApellidos" 
-                            name="txtApellidos" th:value="${usuario.lastName}">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-6">
-                            <label for="txtNombreUsuario">Nombre de usuario (*)</label>
-                            <input type="text" class="form-control" id="txtNombreUsuario" 
-                            name="txtNombreUsuario" th:value="${usuario.userName}">
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="txtCorreo">Correo electrónico (*)</label>
-                            <input type="text" class="form-control" id="txtCorreo" 
-                            name="txtCorreo" th:value="${usuario.email}">
+                        <div class="form-group col-md-12">
+                            <label for="txtNombres">Nombre de usuario (*)</label>
+                            <input type="text" class="form-control" id="txtUsername" 
+                            name="txtUsername" th:value="${usuario.username}" readonly=readonly>
                         </div>
                     </div>
                     <div class="row">
@@ -124,16 +101,16 @@
                             <label for="slcRol">Rol (*)</label>
                             <select class="form-control" id="slcRol" name="slcRol">
                             	<option value="">Seleccione una opción</option>
-                            	<option value="1" th:selected="(${usuario.detalleRoles} == 'ROLE_ADMIN')">Administrador</option>
-                            	<option value="2" th:selected="(${usuario.detalleRoles} == 'ROLE_USER')">Usuario</option>
+                            	<option value="1" th:selected="(${rol} == 'ROLE_ADMIN')">Administrador</option>
+                            	<option value="2" th:selected="(${rol} == 'ROLE_USER')">Usuario</option>
                             </select>
                         </div>
                         <div class="form-group col-md-6">
                             <label for="slcActivo">Activo (*)</label>
                             <select class="form-control" id="slcActivo" name="slcActivo">
                             	<option value="">Seleccione una opción</option>
-                            	<option value="1" th:selected="(${usuario.active} == true)">Sí</option>
-                            	<option value="2" th:selected="(${usuario.active} == false)">No</option>
+                            	<option value="1" th:selected="(${usuario.enabled} == true)">Sí</option>
+                            	<option value="2" th:selected="(${usuario.enabled} == false)">No</option>
                             </select>
                         </div>
                     </div>
@@ -167,7 +144,7 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                        	<input type="hidden" id="hdnId" name="hdnId" th:value="${usuario.id}">
+                        	<input type="hidden" id="hdnId" name="hdnId" th:value="${usuario.username}">
                             <button type="submit" class="btn btn-primary">Editar clave</button>
                         </div>
                     </div>
@@ -177,7 +154,7 @@
 		       
     </main>
     <footer class="container-fluid text-center p-3 bg-dark text-light">
-        &copy; 2022 - Sistema creado para Sales Action 
+        &copy; 2024 - Sistema creado para Sales Action 
     </footer>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -185,6 +162,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+    <script th:src="@{/js/menu.js}"></script>
     <script th:src="@{/js/usuarios/editar.js}"></script>
   </body>
 </html>

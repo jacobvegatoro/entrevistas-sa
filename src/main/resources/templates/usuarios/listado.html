@@ -24,9 +24,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/inicio">Inicio <span class="sr-only">(actual)</span></a>
                     </li>
-                    <!--  <li class="nav-item">
-                        <a class="nav-link" href="/entrevistas">Listado</a>
-                    </li>-->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Listado</a>
                         <div class="dropdown-menu" aria-labelledby="dropdownId">
@@ -60,7 +57,9 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout">Salir</a>
+                      <form name="frmsalir" th:action="@{/logout}" method="POST">
+                      </form>
+                      <a class="nav-link" href="#" onclick="menusalir()">Salir</a>
                     </li>
                 </ul>
             </div>
@@ -96,31 +95,22 @@
                 <table class="table table-striped">
                     <thead>
                       <tr>
-                        <th scope="col">#</th>
                         <th scope="col">Nombre</th>
-                        <th scope="col">Usuario</th>
-                        <th scope="col">Correo electrónico</th>
-                        <th scope="col">Roles</th>
                         <th scope="col">Activo</th>
                         <th scope="col">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr th:each="usuario: ${usuarios}">
-                        <th scope="row" th:text="${usuario.id}" />
-                        <td th:text="${usuario.name} + ' ' + ${usuario.lastName}" />
-                        <td th:text="${usuario.userName}" />
-                        <td th:text="${usuario.email}" />
-                        <td th:text="${usuario.getDetalleRoles()}" />
-                        <!--  <td th:text="${usuario.active}" /> -->
-                        <td th:if= "${usuario.active == true}">Sí</td>
-                        <td th:if= "${usuario.active == false}">No</td>
+                        <th scope="row" th:text="${usuario.username}" />
+                        <td th:if= "${usuario.enabled == true}">Sí</td>
+                        <td th:if= "${usuario.enabled == false}">No</td>
                         <td>
-                            <a th:href="@{/usuarios/editar/{id}(id=${usuario.id})}"
+                            <a th:href="@{/usuarios/editar/{id}(id=${usuario.username})}"
 							class="btn btn-primary btn-sm">Editar</a> 
                             <button type="button" class="btn btn-sm btn-danger botonEliminar" 
                             	data-toggle="modal" data-target="#deleteModal" 
-                            	th:data-id="${usuario.id}">
+                            	th:data-id="${usuario.username}">
                                 Eliminar
                             </button>
                         </td>
@@ -131,8 +121,7 @@
                     <li th:each="pagina: ${paginas}" th:class="${pagina == paginaActual} ? 'page-item disabled' : 'page-item'">
                         <a class="page-link" th:href="@{/usuarios?p={numpage}(numpage=${pagina})}" tabindex="-1" th:text="${pagina}"></a>
                     </li>
-                </ul>
-        
+                  </ul>
             </div>
         </div>
         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -159,13 +148,14 @@
         </div>
     </main>
     <footer class="container-fluid text-center p-3 bg-dark text-light">
-        &copy; 2022 - Sistema creado para Sales Action 
+        &copy; 2024 - Sistema creado para Sales Action 
     </footer>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script th:src="@{/js/menu.js}"></script>
     <script th:src="@{/js/usuarios/listado.js}"></script>
   </body>
 </html>
