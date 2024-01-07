@@ -25,9 +25,6 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/inicio">Inicio <span class="sr-only">(actual)</span></a>
                     </li>
-                    <!--<li class="nav-item">
-                        <a class="nav-link" href="/entrevistas">Listado</a>
-                    </li>-->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Listado</a>
                         <div class="dropdown-menu" aria-labelledby="dropdownId">
@@ -61,7 +58,9 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/logout">Salir</a>
+						<form name="frmsalir" th:action="@{/logout}" method="POST">
+						</form>
+                        <a class="nav-link" href="#" onclick="menusalir()">Salir</a>
                     </li>
                 </ul>
             </div>
@@ -186,7 +185,7 @@
         </div>
     </main>
     <footer class="container-fluid text-center p-3 bg-dark text-light">
-        &copy; 2022 - Sistema creado para Sales Action 
+        &copy; 2024 - Sistema creado para Sales Action 
     </footer>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -195,6 +194,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap4.min.js"></script>
+    <script th:src="@{/js/menu.js}"></script>
     <script th:src="@{/js/entrevistas/rescargacompleta.js}"></script>
   </body>
 </html>

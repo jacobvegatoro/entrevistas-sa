@@ -28,10 +28,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception{
 		//super.configure(http);
-		http.authorizeRequests()
-			.antMatchers("/css/*","/ima/*").permitAll()
-			.anyRequest().authenticated()
-			.and()
+		http
+		.authorizeRequests()
+		.antMatchers("/css/*","/ima/*").permitAll()
+		.antMatchers("/api/v1/**").permitAll()
+		.antMatchers("/clientes/**").hasRole("ADMIN")
+		.antMatchers("/reclutadores/**").hasRole("ADMIN")
+		.antMatchers("/instalaciones/**").hasRole("ADMIN")
+		.antMatchers("/cargos/**").hasRole("ADMIN")
+		.antMatchers("/nacionalidades/**").hasRole("ADMIN")
+		.antMatchers("/estados/**").hasRole("ADMIN")
+		.antMatchers("/usuarios/**").hasRole("ADMIN")
+		.antMatchers("/entrevistas/actmasiva/**").hasRole("ADMIN")
+		.antMatchers("/entrevistas/cargamasiva/**").hasRole("ADMIN")
+		.anyRequest().authenticated()
+		.and()
 		.formLogin().loginPage("/login").loginProcessingUrl("/logincheck")
 		.usernameParameter("username").passwordParameter("password")
 		.defaultSuccessUrl("/loginsuccess").permitAll()
