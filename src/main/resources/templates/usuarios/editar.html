@@ -101,8 +101,9 @@
                             <label for="slcRol">Rol (*)</label>
                             <select class="form-control" id="slcRol" name="slcRol">
                             	<option value="">Seleccione una opción</option>
-                            	<option value="1" th:selected="(${rol} == 'ROLE_ADMIN')">Administrador</option>
-                            	<option value="2" th:selected="(${rol} == 'ROLE_USER')">Usuario</option>
+                            	<option value="1" th:selected="(${rol} == 'ROLE_SUPERADMIN')">Super Administrador</option>
+                            	<option value="2" th:selected="(${rol} == 'ROLE_ADMIN')">Administrador</option>
+                            	<option value="3" th:selected="(${rol} == 'ROLE_USER')">Usuario</option>
                             </select>
                         </div>
                         <div class="form-group col-md-6">

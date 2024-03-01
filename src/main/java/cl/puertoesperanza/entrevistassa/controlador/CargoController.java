@@ -26,7 +26,7 @@ public class CargoController {
 	@Autowired 
 	private EntrevistadoService entrevistadoServicio;
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping
 	public ModelAndView listaCargos() 
 	{
@@ -39,7 +39,7 @@ public class CargoController {
 		return modelAndView;
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/crear")
 	public ModelAndView crearCargo() 
 	{
@@ -48,7 +48,7 @@ public class CargoController {
 		return modelAndView;
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/procesar")
 	public ModelAndView procesarCargo(
 			@RequestParam String txtNombre
@@ -78,7 +78,7 @@ public class CargoController {
 		return modelAndView;
 	}
 	
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/editar/{idcargo}")
 	public ModelAndView editarCargo(@PathVariable Integer idcargo) 
 	{
@@ -91,7 +91,7 @@ public class CargoController {
 		return modelAndView;
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/guardar")
 	public ModelAndView guardarCargo(
 			@RequestParam String txtNombre,
@@ -124,7 +124,7 @@ public class CargoController {
 		return modelAndView;
 	}
 
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
+	//@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/eliminar")
 	public ModelAndView eliminarCargo(
 			@RequestParam Integer idCargo

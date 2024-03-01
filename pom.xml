@@ -11,7 +11,7 @@
 	<groupId>cl.puertoesperanza</groupId> 
 	<artifactId>entrevistas-sa</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 	<name>entrevistas-sa</name>
 	<description>Proyecto entrevistas</description>
 	<properties>

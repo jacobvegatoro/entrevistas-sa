@@ -93,9 +93,12 @@ public class UsuarioController {
 				
 				String rol = "";
 				if (slcRol == 1) {
-					rol = "ROLE_ADMIN";
+					rol = "ROLE_SUPERADMIN";
 				}
 				else if (slcRol == 2) {
+					rol = "ROLE_ADMIN";
+				}
+				else if (slcRol == 3) {
 					rol = "ROLE_USER";
 				}
 				
@@ -246,9 +249,12 @@ public class UsuarioController {
 			if (newUser != null) {
 				
 				if (slcRol.equals("1")) {
-					rol = "ROLE_ADMIN";
+					rol = "ROLE_SUPERADMIN";
 				}
 				else if (slcRol.equals("2")) {
+					rol = "ROLE_ADMIN";
+				}
+				else if (slcRol.equals("3")) {
 					rol = "ROLE_USER";
 				}
 				
