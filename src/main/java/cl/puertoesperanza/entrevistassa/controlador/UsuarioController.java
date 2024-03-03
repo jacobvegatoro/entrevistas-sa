@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -30,6 +31,7 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioRolService usuarioRolService;
 
+	@PreAuthorize("hasRole('ROLE_SUPERADMIN')")
 	@GetMapping
 	public ModelAndView listaUsuarios(@RequestParam(defaultValue = "1") Integer p) 
 	{
@@ -53,6 +55,7 @@ public class UsuarioController {
 		return modelAndView;
 	}
 	
+	@PreAuthorize("hasRole('ROLE_SUPERADMIN')")
 	@GetMapping("/crear")
 	public ModelAndView crearUsuario() 
 	{
@@ -67,6 +70,7 @@ public class UsuarioController {
 		return modelAndView;
 	}
 
+	@PreAuthorize("hasRole('ROLE_SUPERADMIN')")
 	@PostMapping("/procesa")
 	public ModelAndView procesarUsuario(
 			@RequestParam String txtNombreUsuario,
@@ -133,8 +137,8 @@ public class UsuarioController {
 
 		return modelAndView;
 	}
-
 	
+	@PreAuthorize("hasRole('ROLE_SUPERADMIN')")
 	@GetMapping("/editar/{username}")
 	public ModelAndView editarUsuario(@PathVariable String username) 
 	{
@@ -283,6 +287,7 @@ public class UsuarioController {
 		return modelAndView;
 	}
 	
+	@PreAuthorize("hasRole('ROLE_SUPERADMIN')")
 	@PostMapping("/clave")
 	public ModelAndView cambiarClave(
 			@RequestParam String txtClave,
@@ -338,6 +343,7 @@ public class UsuarioController {
 	}
 
 
+	@PreAuthorize("hasRole('ROLE_SUPERADMIN')")
 	@PostMapping("/guardar")
 	public ModelAndView datosUsuario(
 			@RequestParam String slcRol,
@@ -437,6 +443,7 @@ public class UsuarioController {
 		return modelAndView;
 	}
 	
+	@PreAuthorize("hasRole('ROLE_SUPERADMIN')")
 	@PostMapping("/eliminar")
 	public ModelAndView eliminarUsuario(
 			@RequestParam String idUsuario
