@@ -90,7 +90,7 @@ $(document).ready(function(){
 	
 	$("form[name='frmeditaentrevistado']").validate({
     rules: {
-		"reclutador.id": "required",
+		/*"reclutador.id": "required",*/
 		run: {
 			required: true,
 			runValido: true,
@@ -130,10 +130,10 @@ $(document).ready(function(){
 		},
 		"cargo.id":{
 			required: "Selecciona un cargo"
-		},
+		}/*,
 		"reclutador.id":{
 			required: "Selecciona un reclutador"
-		}
+		}*/
     },
     // Make sure the form is submitted to the destination defined
     // in the "action" attribute of the form when valid

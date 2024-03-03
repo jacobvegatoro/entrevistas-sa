@@ -159,14 +159,13 @@
 						<td th:text="${entrevista.apPaterno}" />
 						<td th:text="${entrevista.run}" />
                         <td th:text="${entrevista.cliente.nombreCliente}" />
-                        <td th:text="${entrevista.reclutador.nombreReclutador}" />
+                        <td th:text="${entrevista.usuario} ? ${entrevista.usuario.username} : ''" />
                         <td>
                             <a th:href="@{/entrevistas/editar/{id}(id=${entrevista.idEntrevistado})}"
 							class="btn btn-primary btn-sm">Editar</a> 
                             <button type="button" class="btn btn-sm btn-danger botonEliminar" 
                             	data-toggle="modal" data-target="#deleteModal" 
                             	th:data-id="${entrevista.idEntrevistado}"
-                            	th:if="${roluser == 'ROLE_ADMIN'}"
                             	>
                                 Eliminar
                             </button>

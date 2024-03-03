@@ -93,13 +93,13 @@
                             >
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="r">Reclutador</label>
-                            <select name="r" id="r" class="form-control">
+                            <label for="u">Usuario</label>
+                            <select name="u" id="u" class="form-control">
                                 <option value="">Selecciona una opción</option>
-                                <option th:each="rcl : ${reclutadores}" 
-                                	th:value="${rcl.id}" 
-                                	th:text="${rcl.nombreReclutador}" 
-                                	th:selected="(${rcl.id} == ${idreclutadorselec})" 
+                                <option th:each="usr : ${usuarios}" 
+                                	th:value="${usr.username}" 
+                                	th:text="${usr.username}" 
+                                	th:selected="(${usr.username} == ${usernameselec})" 
                                 	/>
                             </select>
                         </div>
@@ -181,7 +181,7 @@
                             <button type="submit" class="btn btn-info">Filtrar</button>
                             &nbsp;
                             <a class="btn btn-success" 
-                            th:href="@{/entrevistas/exportar/filtro?e={de}&r={dr}&fn={dfn}&fx={dfx}&fne={dfne}&fxe={dfxe}&t={dt}&c={dc}&n={dn}&v={dv}(de=${empresa},dr=${idreclutadorselec},dfn=${fechamin},dfx=${fechamax},dfne=${fechaestmin},dfxe=${fechaestmax},dt=${idestadoselec},dc=${idcargoselec},dn=${idcanalselec},dv=${idvalidadoselec})}"
+                            th:href="@{/entrevistas/exportar/filtro?e={de}&u={du}&fn={dfn}&fx={dfx}&fne={dfne}&fxe={dfxe}&t={dt}&c={dc}&n={dn}&v={dv}(de=${empresa},du=${usernameselec},dfn=${fechamin},dfx=${fechamax},dfne=${fechaestmin},dfxe=${fechaestmax},dt=${idestadoselec},dc=${idcargoselec},dn=${idcanalselec},dv=${idvalidadoselec})}"
                             th:if="${roluser != ''}" 
                             >Exportar</a>
                         </div>
@@ -227,14 +227,13 @@
 						<td th:text="${entrevista.apPaterno}" />
 						<td th:text="${entrevista.run}" />
                         <td th:text="${entrevista.nombreCliente}" />
-                        <td th:text="${entrevista.nombreReclutador}" />
+                        <td th:text="${entrevista.username}" />
                         <td>
-                            <a th:href="@{/entrevistas/editar/{id}(id=${entrevista.idEntrevistado})}"
+                            <a th:href="@{/entrevistas/editar/{id}(id=${entrevista.idEntrevistado})}" 
 							class="btn btn-primary btn-sm">Editar</a> 
                             <button type="button" class="btn btn-sm btn-danger botonEliminar" 
                             	data-toggle="modal" data-target="#deleteModal" 
-                            	th:data-id="${entrevista.idEntrevistado}"
-                            	th:if="${roluser == 'ROLE_ADMIN'}" 
+                            	th:data-id="${entrevista.idEntrevistado}" 
                             	>
                                 Eliminar
                             </button>
@@ -245,7 +244,7 @@
                   <ul class="pagination pagination-md justify-content-center">
                     <li th:each="pagina: ${paginas}" th:class="${pagina == paginaActual} ? 'page-item disabled' : 'page-item'">
                         <a class="page-link" 
-                        th:href="@{/entrevistas/busqueda?p={numpage}&e={de}&r={dr}&fn={dfn}&fx={dfx}&fne={dfne}&fxe={dfxe}&t={dt}&c={dc}&n={dn}&v={dv}(numpage=${pagina},de=${empresa},dr=${idreclutadorselec},dfn=${fechamin},dfx=${fechamax},dfne=${fechaestmin},dfxe=${fechaestmax},dt=${idestadoselec},dc=${idcargoselec},dn=${idcanalselec},dv=${idvalidadoselec})}" tabindex="-1" th:text="${pagina}"></a>
+                        th:href="@{/entrevistas/busqueda?p={numpage}&e={de}&u={du}&fn={dfn}&fx={dfx}&fne={dfne}&fxe={dfxe}&t={dt}&c={dc}&n={dn}&v={dv}(numpage=${pagina},de=${empresa},du=${usernameselec},dfn=${fechamin},dfx=${fechamax},dfne=${fechaestmin},dfxe=${fechaestmax},dt=${idestadoselec},dc=${idcargoselec},dn=${idcanalselec},dv=${idvalidadoselec})}" tabindex="-1" th:text="${pagina}"></a>
                     </li>
                 </ul>
         

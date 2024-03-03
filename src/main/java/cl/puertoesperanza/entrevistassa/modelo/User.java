@@ -77,4 +77,14 @@ public class User {
 		this.userRole = userRole;
 	}
 	
+	public String getTextoRoles() {
+		String roles = "";
+		
+		for (UserRole rol:this.userRole) {
+			roles += rol.getRole();
+		}
+		
+		return roles;
+	}
+	
 }

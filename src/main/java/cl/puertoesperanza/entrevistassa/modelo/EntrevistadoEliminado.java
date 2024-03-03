@@ -120,5 +120,6 @@ public class EntrevistadoEliminado {
     //Grupo 12 (2 campos)
     private Integer entrevistadorId;
 	private String nombreEntrevistador;
+	private String username;
 	
 }

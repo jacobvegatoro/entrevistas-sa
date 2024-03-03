@@ -66,7 +66,7 @@ public class Entrevistado {
 	private String direccionContacto;
 	
 	@ManyToOne
-	@JoinColumn(name = "reclutador_id", nullable = false)
+	@JoinColumn(name = "reclutador_id", nullable = true)
 	private Reclutador reclutador; 
 
 	@ManyToOne
@@ -96,5 +96,9 @@ public class Entrevistado {
 	@ManyToOne
 	@JoinColumn(name = "entrevistador_id", nullable = true)
 	private Entrevistador entrevistador;
+	
+	@ManyToOne
+	@JoinColumn(name = "username", nullable = true)
+	private User usuario;
 
 }

@@ -17,6 +17,7 @@ import cl.puertoesperanza.entrevistassa.modelo.Cliente;
 import cl.puertoesperanza.entrevistassa.modelo.Entrevistado;
 import cl.puertoesperanza.entrevistassa.modelo.Instalacion;
 import cl.puertoesperanza.entrevistassa.modelo.Reclutador;
+import cl.puertoesperanza.entrevistassa.modelo.User;
 import cl.puertoesperanza.entrevistassa.repositorio.EntrevistadoRepository;
 
 @Service
@@ -94,7 +95,15 @@ public class EntrevistadoServiceImpl implements EntrevistadoService {
 		Page<Entrevistado> responsePage = entrevistadoRepositorio.findAll(pageable);
 		return responsePage.getContent();
 	}
-/*
+
+	@Override
+	public List<Entrevistado> getPageUser(Integer pagina, Integer cantidad, User usuario) {
+		Pageable pageable = PageRequest.of(pagina, cantidad);
+		Page<Entrevistado> responsePage = entrevistadoRepositorio.findByUsuario(usuario, pageable);
+		return responsePage.getContent();
+	}
+
+	/*
 	@Override
 	public List<Entrevistado> buscarEntrevistados
 	(
@@ -287,6 +296,44 @@ public class EntrevistadoServiceImpl implements EntrevistadoService {
 	}
 
 	@Override
+	public List<Entrevistado> buscarEntrevistadosFiltroUsuario(
+			String nombres, 
+			String appaterno, 
+			String apmaterno,
+			String run,
+			User usuario) {
+
+		SearchSpecifications<Entrevistado> searchSpecifications = new SearchSpecifications<>();
+		
+		if (nombres.length() > 0) 
+		{
+			searchSpecifications.add(new SearchCriteria("nombres",nombres, SearchOperation.MATCH));
+		}
+		
+		if (appaterno.length() > 0) 
+		{
+			searchSpecifications.add(new SearchCriteria("apPaterno",appaterno, SearchOperation.MATCH));
+		}
+
+		if (apmaterno.length() > 0) 
+		{
+			searchSpecifications.add(new SearchCriteria("apMaterno",apmaterno, SearchOperation.MATCH));
+		}
+
+		if (run.length() > 0) 
+		{
+			searchSpecifications.add(new SearchCriteria("run",run, SearchOperation.MATCH));
+		}
+
+		if (usuario.getUsername().length() > 0) 
+		{
+			searchSpecifications.add(new SearchCriteria("usuario",usuario, SearchOperation.EQUAL));
+		}
+
+		return entrevistadoRepositorio.findAll(searchSpecifications);
+	}
+
+	@Override
 	public List<Entrevistado> buscarEntrevistadosFiltroPagina(
 			String nombres, 
 			String appaterno, 
@@ -320,8 +367,50 @@ public class EntrevistadoServiceImpl implements EntrevistadoService {
 		System.out.println("Pagina: " + pagina + ", cantidad: " + cantidad);
 		Pageable pageable = PageRequest.of(pagina, cantidad);
 		Page<Entrevistado> responsePage = entrevistadoRepositorio.findAll(searchSpecifications, pageable);
-		return responsePage.getContent();
+		return responsePage.getContent();	
+	}
+
+	@Override
+	public List<Entrevistado> buscarEntrevistadosFiltroUsuarioPagina(
+			String nombres, 
+			String appaterno, 
+			String apmaterno,
+			String run, 
+			Integer pagina, 
+			Integer cantidad,
+			User usuario) {
+
+		SearchSpecifications<Entrevistado> searchSpecifications = new SearchSpecifications<>();
 		
+		if (nombres.length() > 0) 
+		{
+			searchSpecifications.add(new SearchCriteria("nombres",nombres, SearchOperation.MATCH));
+		}
+		
+		if (appaterno.length() > 0) 
+		{
+			searchSpecifications.add(new SearchCriteria("apPaterno",appaterno, SearchOperation.MATCH));
+		}
+
+		if (apmaterno.length() > 0) 
+		{
+			searchSpecifications.add(new SearchCriteria("apMaterno",apmaterno, SearchOperation.MATCH));
+		}
+
+		if (run.length() > 0) 
+		{
+			searchSpecifications.add(new SearchCriteria("run",run, SearchOperation.MATCH));
+		}
+
+		if (usuario.getUsername().length() > 0) 
+		{
+			searchSpecifications.add(new SearchCriteria("usuario",usuario, SearchOperation.EQUAL));
+		}
+
+		System.out.println("Pagina: " + pagina + ", cantidad: " + cantidad);
+		Pageable pageable = PageRequest.of(pagina, cantidad);
+		Page<Entrevistado> responsePage = entrevistadoRepositorio.findAll(searchSpecifications, pageable);
+		return responsePage.getContent();	
 	}
 
 	@Override
@@ -365,6 +454,11 @@ public class EntrevistadoServiceImpl implements EntrevistadoService {
 	@Override
 	public List<Entrevistado> obtenerEntrevistadosPorEstado(Integer idestado) {
 		return entrevistadoRepositorio.findByEstado(idestado);
+	}
+
+	@Override
+	public List<Entrevistado> obtenerEntrevistadosPorUsuario(User usuario) {
+		return entrevistadoRepositorio.findByUsuario(usuario);
 	}
 
 }

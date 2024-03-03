@@ -7,6 +7,7 @@ import cl.puertoesperanza.entrevistassa.modelo.Cliente;
 import cl.puertoesperanza.entrevistassa.modelo.Entrevistado;
 import cl.puertoesperanza.entrevistassa.modelo.Instalacion;
 import cl.puertoesperanza.entrevistassa.modelo.Reclutador;
+import cl.puertoesperanza.entrevistassa.modelo.User;
 
 public interface EntrevistadoService {
 
@@ -19,6 +20,7 @@ public interface EntrevistadoService {
 	Entrevistado obtenerEntrevistadoPorId(Integer idEntrevistado);
 	long getPageCount(long registrosTotales, long registrosPorPagina);
 	List<Entrevistado> getPage(Integer pagina, Integer cantidad);
+	List<Entrevistado> getPageUser(Integer pagina, Integer cantidad, User usuario);
 	/*List<Entrevistado> buscarEntrevistados(String empresa, Reclutador reclutador, 
 			String fechamin, String fechamax, Integer estado, Cargo cargo, Canal canal,
 			Integer validado);
@@ -27,13 +29,18 @@ public interface EntrevistadoService {
 			Integer validado, Integer pagina, Integer cantidad);*/
 	List<Entrevistado> buscarEntrevistadosFiltro(String nombres, String appaterno, 
 			String apmaterno, String run);
+	List<Entrevistado> buscarEntrevistadosFiltroUsuario(String nombres, String appaterno, 
+			String apmaterno, String run, User usuario);
 	List<Entrevistado> buscarEntrevistadosFiltroPagina(String nombres, String appaterno, 
 			String apmaterno, String run, Integer pagina, Integer cantidad);
+	List<Entrevistado> buscarEntrevistadosFiltroUsuarioPagina(String nombres, String appaterno, 
+			String apmaterno, String run, Integer pagina, Integer cantidad, User usuario);
 	List<Entrevistado> obtenerEntrevistadosPorCliente(Cliente cliente);
 	List<Entrevistado> obtenerEntrevistadosPorReclutador(Reclutador reclutador);
 	List<Entrevistado> obtenerEntrevistadosPorInstalacion(Instalacion instalacion);
 	List<Entrevistado> obtenerEntrevistadosPorCargo(Cargo cargo);
 	List<Entrevistado> obtenerEntrevistadosPorNacionalidad(Integer idnacionalidad);
 	List<Entrevistado> obtenerEntrevistadosPorEstado(Integer idestado);
+	List<Entrevistado> obtenerEntrevistadosPorUsuario(User usuario);
 	
 }

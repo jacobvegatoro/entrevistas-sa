@@ -110,5 +110,7 @@ public class EntrevistadoVista {
     
 	private Integer entrevistadorId;
 	private String nombreEntrevistador;
-	
+
+	private String username;
+
 }

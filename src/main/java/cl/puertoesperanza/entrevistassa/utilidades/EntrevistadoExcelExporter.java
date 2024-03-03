@@ -43,7 +43,7 @@ public class EntrevistadoExcelExporter {
          
         createCell(row, 0, "Postulante ID", style);
         createCell(row, 1, "Fecha ingreso", style);
-        createCell(row, 2, "Reclutador", style);
+        createCell(row, 2, "Usuario", style);
         createCell(row, 3, "Run", style);
         createCell(row, 4, "Cliente", style);
         createCell(row, 5, "Nombres", style);
@@ -131,10 +131,25 @@ public class EntrevistadoExcelExporter {
         cell.setCellValue(value);
         cell.setCellStyle(style);
     }
+
     
+    private void createCellIntegerV2(Row row, int columnCount, Integer value, CellStyle style, Cell cell) {
+        //sheet.autoSizeColumn(columnCount);
+        cell = row.createCell(columnCount);
+        cell.setCellValue(value);
+        cell.setCellStyle(style);
+    }
+
     private void createCellString(Row row, int columnCount, String value, CellStyle style) {
         //sheet.autoSizeColumn(columnCount);
         Cell cell = row.createCell(columnCount);
+        cell.setCellValue(value);
+        cell.setCellStyle(style);
+    }
+
+    private void createCellStringV2(Row row, int columnCount, String value, CellStyle style, Cell cell) {
+        //sheet.autoSizeColumn(columnCount);
+        cell = row.createCell(columnCount);
         cell.setCellValue(value);
         cell.setCellStyle(style);
     }
@@ -160,78 +175,116 @@ public class EntrevistadoExcelExporter {
         cell.setCellStyle(style);
     }
 
+    private void createCellDateV2(Row row, int columnCount, String value, CellStyle style, Cell cell) {
+        cell = row.createCell(columnCount);
+        
+        if (value.trim().length() > 0) {
+            Date fecha = new Date();
+            try {
+                fecha=new SimpleDateFormat("dd-MM-yyyy").parse(value);        	
+            }
+            catch(ParseException e) 
+            {
+            	System.out.println("Error al convertir la fecha");
+            }
+            cell.setCellValue(fecha);        	
+        }
+        else {
+        	cell.setCellValue(value);
+        }
+        
+        cell.setCellStyle(style);
+    }
+
     private void writeDataLines() {
         int rowCount = 1;
  
-        CellStyle style = workbook.createCellStyle();
+        CellStyle styleRegular = workbook.createCellStyle();
         XSSFFont font = workbook.createFont();
         font.setFontHeight(14);
-        style.setFont(font);
+        styleRegular.setFont(font);
         
         CreationHelper createHelper = workbook.getCreationHelper();
         CellStyle styleDate = workbook.createCellStyle();
         styleDate.setFont(font);
         styleDate.setDataFormat(createHelper.createDataFormat().getFormat("dd-mm-yyyy"));
-        
+
+        CellStyle style = workbook.createCellStyle();
+        Row row;
+        Cell celda;
+        int columnCount;
         for (EntrevistadoVista evista : lentrevistadosvista) {
-            Row row = sheet.createRow(rowCount++);
-            int columnCount = 0;
-    		
-            createCellInteger(row, columnCount++, evista.getIdEntrevistado(), style);
-            createCellDate(row, columnCount++, evista.getFechaIngreso(), styleDate);
-            createCellString(row, columnCount++, evista.getNombreReclutador(), style);
-            createCellString(row, columnCount++, evista.getRun(), style);
-            createCellString(row, columnCount++, evista.getNombreCliente(), style);
-            createCellString(row, columnCount++, evista.getNombres(), style);
-            createCellString(row, columnCount++, evista.getApPaterno(), style);
-            createCellString(row, columnCount++, evista.getApMaterno(), style);
-            createCellString(row, columnCount++, evista.getCorreoElectronico(), style);
-            createCellString(row, columnCount++, evista.getTelefono(), style);
-            createCellString(row, columnCount++, evista.getObservacionRegistro(), style);
+            columnCount = 0;
+            row = sheet.createRow(rowCount++);
+            style = styleRegular;
 
-            createCellString(row, columnCount++, evista.getEmpresa(), style);
-            createCellString(row, columnCount++, evista.getEstadoValidado(), style);
-            createCellDate(row, columnCount++, evista.getFechaEstado(), styleDate);
-            createCellString(row, columnCount++, evista.getEstado(), style);
-            createCellString(row, columnCount++, evista.getNombreInstalacion(), style);
-            createCellString(row, columnCount++, evista.getNombreCargo(), style);
-            createCellString(row, columnCount++, evista.getNombreRegion(), style);
-            createCellString(row, columnCount++, evista.getNombreComuna(), style);
-            createCellString(row, columnCount++, evista.getPeriodo(), style);
-            createCellString(row, columnCount++, evista.getServicio(), style);
-            createCellDate(row, columnCount++, evista.getFechaContratacion(), styleDate);
-            createCellString(row, columnCount++, evista.getObservacionComplementaria(), style);
-
-            createCellString(row, columnCount++, evista.getNombreCanal(), style);
-            createCellString(row, columnCount++, evista.getContactado(), style);
-            createCellString(row, columnCount++, evista.getPresentacion(), style);
-            createCellString(row, columnCount++, evista.getObservacionContacto(), style);
-
-            createCellString(row, columnCount++, evista.getDetalleNacionalidad(), style);
-            createCellDate(row, columnCount++, evista.getFechaNacimiento(), styleDate);
-            createCellInteger(row, columnCount++, evista.getEdad(), style);
-            createCellString(row, columnCount++, evista.getDireccion(), style);
-            createCellString(row, columnCount++, evista.getCiudad(), style);
-            createCellString(row, columnCount++, evista.getNumeroDireccion(), style);
-            createCellString(row, columnCount++, evista.getPrevision(), style);
-            createCellString(row, columnCount++, evista.getSalud(), style);
-            createCellString(row, columnCount++, evista.getSeguroCovid(), style);
-            createCellString(row, columnCount++, evista.getTipoCuenta(), style);
-            createCellString(row, columnCount++, evista.getBanco(), style);
-            createCellString(row, columnCount++, evista.getNumeroCuenta(), style);
-            createCellString(row, columnCount++, evista.getCalzado(), style);
-            createCellString(row, columnCount++, evista.getPolera(), style);
-            createCellString(row, columnCount++, evista.getPoleron(), style);
-            createCellString(row, columnCount++, evista.getPantalon(), style);
-    		
-            createCellString(row, columnCount++, evista.getNombreContacto(), style);
-            createCellString(row, columnCount++, evista.getTelefonoContacto(), style);
-            createCellString(row, columnCount++, evista.getParentesco(), style);
-            createCellString(row, columnCount++, evista.getDireccionContacto(), style);
-            createCellString(row, columnCount++, evista.getNombreRegionContacto(), style);
-            createCellString(row, columnCount++, evista.getComunaContacto(), style);
+            //createCellIntegerV2(row, columnCount++, evista.getIdEntrevistado(), style, celda);
+            celda = row.createCell(columnCount++);
+            celda.setCellValue(evista.getIdEntrevistado());
+            celda.setCellStyle(style);
             
-            createCellString(row, columnCount++, evista.getNombreEntrevistador(), style);            
+            style = styleDate;
+            createCellDateV2(row, columnCount++, evista.getFechaIngreso(), style, celda);
+            style = styleRegular;
+            createCellStringV2(row, columnCount++, evista.getUsername(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getRun(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getNombreCliente(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getNombres(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getApPaterno(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getApMaterno(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getCorreoElectronico(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getTelefono(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getObservacionRegistro(), style, celda);
+
+            createCellStringV2(row, columnCount++, evista.getEmpresa(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getEstadoValidado(), style, celda);
+            style = styleDate;
+            createCellDateV2(row, columnCount++, evista.getFechaEstado(), styleDate, celda);
+            style = styleRegular;
+            createCellStringV2(row, columnCount++, evista.getEstado(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getNombreInstalacion(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getNombreCargo(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getNombreRegion(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getNombreComuna(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getPeriodo(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getServicio(), style, celda);
+            style = styleDate;
+            createCellDateV2(row, columnCount++, evista.getFechaContratacion(), styleDate, celda);
+            style = styleRegular;
+            createCellStringV2(row, columnCount++, evista.getObservacionComplementaria(), style, celda);
+
+            createCellStringV2(row, columnCount++, evista.getNombreCanal(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getContactado(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getPresentacion(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getObservacionContacto(), style, celda);
+
+            createCellStringV2(row, columnCount++, evista.getDetalleNacionalidad(), style, celda);
+            style = styleDate;
+            createCellDateV2(row, columnCount++, evista.getFechaNacimiento(), styleDate, celda);
+            style = styleRegular;
+            createCellIntegerV2(row, columnCount++, evista.getEdad(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getDireccion(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getCiudad(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getNumeroDireccion(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getPrevision(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getSalud(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getSeguroCovid(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getTipoCuenta(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getBanco(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getNumeroCuenta(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getCalzado(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getPolera(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getPoleron(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getPantalon(), style, celda);
+    		
+            createCellStringV2(row, columnCount++, evista.getNombreContacto(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getTelefonoContacto(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getParentesco(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getDireccionContacto(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getNombreRegionContacto(), style, celda);
+            createCellStringV2(row, columnCount++, evista.getComunaContacto(), style, celda);
+            
+            createCellStringV2(row, columnCount++, evista.getNombreEntrevistador(), style, celda);
         }
     }
     

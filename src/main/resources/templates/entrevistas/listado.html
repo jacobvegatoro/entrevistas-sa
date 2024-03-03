@@ -92,13 +92,13 @@
                             >
                         </div>
                         <div class="form-group col-md-4">
-                            <label for="r">Reclutador</label>
-                            <select name="r" id="r" class="form-control">
+                            <label for="u">Usuario</label>
+                            <select name="u" id="u" class="form-control">
                                 <option value="">Selecciona una opción</option>
-                                <option th:each="rcl : ${reclutadores}" 
-                                	th:value="${rcl.id}" 
-                                	th:text="${rcl.nombreReclutador}" 
-                                	th:selected="(${rcl.id} == ${idreclutadorselec})" 
+                                <option th:each="usr : ${usuarios}" 
+                                	th:value="${usr.username}" 
+                                	th:text="${usr.username}" 
+                                	th:selected="(${usr.username} == ${usernameselec})" 
                                 	/>
                             </select>
                         </div>
@@ -182,7 +182,6 @@
                             <button type="button" class="btn btn-success" 
                             role="link" 
                             onclick="window.location='/entrevistas/exportar'"
-                            th:if="${roluser != ''}"
                             >Exportar</button>
                         </div>
                     </div>
@@ -227,14 +226,13 @@
 						<td th:text="${entrevista.apPaterno}" />
 						<td th:text="${entrevista.run}" />
                         <td th:text="${entrevista.nombreCliente}" />
-                        <td th:text="${entrevista.nombreReclutador}" />
+                        <td th:text="${entrevista.username}" />
                         <td>
                             <a th:href="@{/entrevistas/editar/{id}(id=${entrevista.idEntrevistado})}"
 							class="btn btn-primary btn-sm">Editar</a> 
                             <button type="button" class="btn btn-sm btn-danger botonEliminar" 
                             	data-toggle="modal" data-target="#deleteModal" 
                             	th:data-id="${entrevista.idEntrevistado}"
-                            	th:if="${roluser == 'ROLE_ADMIN'}" 
                             	>
                                 Eliminar
                             </button>

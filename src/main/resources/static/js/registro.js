@@ -57,8 +57,8 @@ $(document).ready(function(){
 		slcRegion: "required",
 		slcComuna: "required",
 		"canal.id": "required",
-		"cargo.id": "required",
-		"reclutador.id": "required"
+		"cargo.id": "required"/*,
+		"reclutador.id": "required"*/
     },
     messages: {
 		nombres:{
@@ -89,10 +89,10 @@ $(document).ready(function(){
 		},
 		"cargo.id":{
 			required: "Selecciona un cargo"
-		},
+		}/*,
 		"reclutador.id":{
 			required: "Selecciona un reclutador"
-		}
+		}*/
     },
     // Make sure the form is submitted to the destination defined
     // in the "action" attribute of the form when valid

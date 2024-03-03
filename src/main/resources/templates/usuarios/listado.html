@@ -96,13 +96,15 @@
                     <thead>
                       <tr>
                         <th scope="col">Nombre</th>
+                        <th scope="col">Rol</th>                        
                         <th scope="col">Activo</th>
                         <th scope="col">Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr th:each="usuario: ${usuarios}">
-                        <th scope="row" th:text="${usuario.username}" />
+                        <td scope="row" th:text="${usuario.username}" />
+                        <td th:text="${usuario.getTextoRoles()}" />
                         <td th:if= "${usuario.enabled == true}">Sí</td>
                         <td th:if= "${usuario.enabled == false}">No</td>
                         <td>

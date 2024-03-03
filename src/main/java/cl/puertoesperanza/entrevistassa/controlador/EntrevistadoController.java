@@ -21,6 +21,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 //import org.springframework.security.core.Authentication;
 //import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -64,7 +65,7 @@ import cl.puertoesperanza.entrevistassa.modelo.EntrevistadoEliminado;
 import cl.puertoesperanza.entrevistassa.modelo.EntrevistadoVista;
 import cl.puertoesperanza.entrevistassa.modelo.Entrevistador;
 import cl.puertoesperanza.entrevistassa.modelo.Instalacion;
-import cl.puertoesperanza.entrevistassa.modelo.Reclutador;
+//import cl.puertoesperanza.entrevistassa.modelo.Reclutador;
 import cl.puertoesperanza.entrevistassa.modelo.Region;
 import cl.puertoesperanza.entrevistassa.servicio.BancoService;
 import cl.puertoesperanza.entrevistassa.servicio.CanalService;
@@ -90,6 +91,7 @@ import cl.puertoesperanza.entrevistassa.servicio.SeguroCovidService;
 import cl.puertoesperanza.entrevistassa.servicio.ServicioService;
 import cl.puertoesperanza.entrevistassa.servicio.TallaService;
 import cl.puertoesperanza.entrevistassa.servicio.TipoCuentaService;
+import cl.puertoesperanza.entrevistassa.servicio.UsuarioService;
 import cl.puertoesperanza.entrevistassa.servicio.ValidadoService;
 import cl.puertoesperanza.entrevistassa.utilidades.EntrevistadoExcelExporter;
 import cl.puertoesperanza.entrevistassa.utilidades.Util;
@@ -173,6 +175,9 @@ public class EntrevistadoController {
 	@Autowired
 	private EntrevistadoEliminadoService entrevistadoEliminadoServicio;
 	
+	@Autowired
+	private UsuarioService usuarioServicio;
+	
 	private Integer paginacion = 10;
 	
 	private Integer diasexportacion = 30;
@@ -180,11 +185,35 @@ public class EntrevistadoController {
 	@GetMapping("/listadobusqueda")
 	public ModelAndView listaentrevistados(@RequestParam(defaultValue = "1") Integer p) 
 	{
-		System.out.println("Inicio método listaentrevistados");
+		//System.out.println("Inicio método listaentrevistados");
 		
 		ModelAndView modelAndView = new ModelAndView("entrevistas/listafiltro");
+
 		
-		long cantTotal = entrevistadoServicio.obtenerEntrevistados().size();
+		String roluser = "ROLE_USER";		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
+			roluser = "ROLE_ADMIN";
+		}
+		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+			roluser = "ROLE_SUPERADMIN";
+		}
+
+		List<Entrevistado> listaentrevistados = new ArrayList<Entrevistado>();
+		
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+		long cantTotal = 0;
+		
+		if (roluser.equals("ROLE_USER")) {
+			cl.puertoesperanza.entrevistassa.modelo.User usuarioActual = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+			cantTotal = entrevistadoServicio.obtenerEntrevistadosPorUsuario(usuarioActual).size();
+			listaentrevistados = entrevistadoServicio.getPageUser(p-1, this.paginacion, usuarioActual);
+		}
+		else {
+			cantTotal = entrevistadoServicio.obtenerEntrevistados().size();			
+			listaentrevistados = entrevistadoServicio.getPage(p-1, this.paginacion);
+		}
+
 		modelAndView.addObject("paginas", Util.getArregloPaginas(p, (int) entrevistadoServicio.getPageCount(cantTotal, this.paginacion)));
 		modelAndView.addObject("paginaActual",p);
 		
@@ -193,23 +222,13 @@ public class EntrevistadoController {
 		modelAndView.addObject("apmaterno","");
 		modelAndView.addObject("run","");
 				
-		System.out.println("Variables inicializadas");
+		//System.out.println("Variables inicializadas");
 		
-		List<Entrevistado> listaentrevistados = new ArrayList<Entrevistado>();
-		listaentrevistados = entrevistadoServicio.getPage(p-1, this.paginacion);
-		
-		System.out.println("Lista de entrevistados generada");
+		//System.out.println("Lista de entrevistados generada");
 
 		modelAndView.addObject("entrevistados",listaentrevistados);
 
-		System.out.println("Lista de entrevistados agregada al modelo");
-
-		String roluser = "ROLE_USER";
-		
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
-			roluser = "ROLE_ADMIN";
-		}
+		//System.out.println("Lista de entrevistados agregada al modelo");
 		
 		modelAndView.addObject("roluser",roluser);
 
@@ -219,12 +238,35 @@ public class EntrevistadoController {
 	@GetMapping("/listadoexportar")
 	public ModelAndView listaexportar(@RequestParam(defaultValue = "1") Integer p) 
 	{
-		System.out.println("Inicio método entrevistadosfiltro");
+		//System.out.println("Inicio método entrevistadosfiltro");
 		
 		ModelAndView modelAndView = new ModelAndView("entrevistas/listado");
+
+		String roluser = "ROLE_USER";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
-		//long cantTotal = entrevistadoServicio.obtenerEntrevistados().size();
-		long cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVista().size();
+		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
+			roluser = "ROLE_ADMIN";
+		}
+		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+			roluser = "ROLE_SUPERADMIN";
+		}
+
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		List<EntrevistadoVista> listaentrevistados = new ArrayList<EntrevistadoVista>();
+		
+		long cantTotal = 0;
+		
+		if (roluser.equals("ROLE_USER")) {
+			cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVistaUsuario(user.getUsername()).size();
+			listaentrevistados = entrevistadoVistaServicio.getPageUsuario(p-1, this.paginacion, user.getUsername());
+		}
+		else {
+			cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVista().size();
+			listaentrevistados = entrevistadoVistaServicio.getPage(p-1, this.paginacion);
+		}
+		
 		modelAndView.addObject("paginas", Util.getArregloPaginas(p, (int) entrevistadoVistaServicio.getPageCount(cantTotal, this.paginacion)));
 		modelAndView.addObject("paginaActual",p);
 		
@@ -232,8 +274,22 @@ public class EntrevistadoController {
 		modelAndView.addObject("cargos",cargoServicio.obtenerCargos());
 		modelAndView.addObject("idcanalselec",0);
 		modelAndView.addObject("canales",canalServicio.obtenerCanales());
-		modelAndView.addObject("idreclutadorselec",0);
-		modelAndView.addObject("reclutadores",reclutadorServicio.obtenerReclutadores());
+
+		//modelAndView.addObject("idreclutadorselec",0);
+		//modelAndView.addObject("reclutadores",reclutadorServicio.obtenerReclutadores());
+		
+		List<cl.puertoesperanza.entrevistassa.modelo.User> usuarios = new ArrayList<cl.puertoesperanza.entrevistassa.modelo.User>();
+		
+		if (roluser.equals("ROLE_USER")) {
+			usuarios.add(usuarioServicio.obtenerUsuarioPorNombre(user.getUsername()));
+		}
+		else {
+			usuarios = usuarioServicio.obtenerUsuarios();
+		}
+		
+		modelAndView.addObject("usuarios",usuarios);
+		modelAndView.addObject("usernameselec","");
+		
 		modelAndView.addObject("idestadoselec",0);
 		modelAndView.addObject("estados",estadoServicio.obtenerEstados());
 		modelAndView.addObject("fechamin","");
@@ -244,23 +300,15 @@ public class EntrevistadoController {
 		modelAndView.addObject("idvalidadoselec",0);
 		modelAndView.addObject("validados",validadoServicio.obtenerValidados());
 
-		System.out.println("Variables inicializadas");
+		//System.out.println("Variables inicializadas");
 		
-		List<EntrevistadoVista> listaentrevistados = new ArrayList<EntrevistadoVista>();
-		listaentrevistados = entrevistadoVistaServicio.getPage(p-1, this.paginacion);
-		
-		System.out.println("Lista de entrevistados generada");
+		//System.out.println("Lista de entrevistados generada");
 
 		modelAndView.addObject("entrevistados",listaentrevistados);
 
-		System.out.println("Lista de entrevistados agregada al modelo");
+		//System.out.println("Lista de entrevistados agregada al modelo");
 
-		String roluser = "ROLE_USER";
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
-			roluser = "ROLE_ADMIN";
-		}
-		modelAndView.addObject("roluser",roluser);
+		modelAndView.addObject("roluser",roluser);		
 
 		return modelAndView;
 	}
@@ -269,7 +317,7 @@ public class EntrevistadoController {
 	public ModelAndView filtrarentrevistados(
 			@RequestParam(defaultValue = "1") Integer p, 
 			@RequestParam(defaultValue = "") String e, 
-			@RequestParam(defaultValue = "0") Integer r, 
+			@RequestParam(defaultValue = "") String u, 
 			@RequestParam(defaultValue = "") String fn, 
 			@RequestParam(defaultValue = "") String fx,	
 			@RequestParam(defaultValue = "") String fne, 
@@ -282,6 +330,17 @@ public class EntrevistadoController {
 	{
 		System.out.println("Se inicia búsqueda de registros");
 		ModelAndView modelAndView = new ModelAndView("entrevistas/listabusqueda");
+
+		String roluser = "ROLE_USER";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
+			roluser = "ROLE_ADMIN";
+		}
+		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+			roluser = "ROLE_SUPERADMIN";
+		}
 
 		String empresa = "";
 		if (e.trim().length() > 0) 
@@ -312,6 +371,7 @@ public class EntrevistadoController {
 		modelAndView.addObject("idcanalselec",idcanalselec);
 		modelAndView.addObject("canales",canalServicio.obtenerCanales());
 
+		/*
 		Integer idreclutadorselec = 0;
 		//Reclutador reclutador = new Reclutador();
 		if (r > 0) {
@@ -320,6 +380,24 @@ public class EntrevistadoController {
 		} 
 		modelAndView.addObject("idreclutadorselec",idreclutadorselec);
 		modelAndView.addObject("reclutadores",reclutadorServicio.obtenerReclutadores());
+		*/
+		
+		String usernameselec = "";
+		if (u.trim().length() > 0) {
+			usernameselec = u;
+		}
+		
+		List<cl.puertoesperanza.entrevistassa.modelo.User> usuarios = new ArrayList<cl.puertoesperanza.entrevistassa.modelo.User>();
+		
+		if (roluser.equals("ROLE_USER")) {
+			usuarios.add(usuarioServicio.obtenerUsuarioPorNombre(user.getUsername()));
+		}
+		else {
+			usuarios = usuarioServicio.obtenerUsuarios();
+		}
+
+		modelAndView.addObject("usernameselec",usernameselec);
+		modelAndView.addObject("usuarios",usuarios);
 		
 		Integer idestadoselec = 0;
 		if (t > 0) 
@@ -353,10 +431,18 @@ public class EntrevistadoController {
 		
 		List<EntrevistadoVista> listaentrevistas = new ArrayList<EntrevistadoVista>();
 
-		listaentrevistas = entrevistadoVistaServicio.buscarEntrevistados(
-				empresa, idreclutadorselec, fechamin, fechamax, fechaestmin, 
-				fechaestmax, idestadoselec, 
-				idcargoselec, idcanalselec, idvalidadoselec);
+		if (roluser.equals("ROLE_USER")) {
+			listaentrevistas = entrevistadoVistaServicio.buscarEntrevistadosUsuario(
+					empresa, usernameselec, fechamin, fechamax, fechaestmin, 
+					fechaestmax, idestadoselec, 
+					idcargoselec, idcanalselec, idvalidadoselec, user.getUsername());
+		}
+		else {
+			listaentrevistas = entrevistadoVistaServicio.buscarEntrevistados(
+					empresa, usernameselec, fechamin, fechamax, fechaestmin, 
+					fechaestmax, idestadoselec, 
+					idcargoselec, idcanalselec, idvalidadoselec);
+		}
 
 		System.out.println("Listado completo de entrevistados filtrado obtenido");
 
@@ -368,10 +454,18 @@ public class EntrevistadoController {
 
 		List<EntrevistadoVista> listaentrevistaspagina = new ArrayList<EntrevistadoVista>();
 
-		listaentrevistaspagina = entrevistadoVistaServicio.buscarEntrevistadosPagina(
-				empresa, idreclutadorselec, fechamin, fechamax, fechaestmin, 
-				fechaestmax, idestadoselec, 
-				idcargoselec, idcanalselec, idvalidadoselec, p-1, this.paginacion);
+		if (roluser.equals("ROLE_USER")) {
+			listaentrevistaspagina = entrevistadoVistaServicio.buscarEntrevistadosUsuarioPagina(
+					empresa, usernameselec, fechamin, fechamax, fechaestmin, 
+					fechaestmax, idestadoselec, 
+					idcargoselec, idcanalselec, idvalidadoselec, p-1, this.paginacion, user.getUsername());
+		}
+		else {
+			listaentrevistaspagina = entrevistadoVistaServicio.buscarEntrevistadosPagina(
+					empresa, usernameselec, fechamin, fechamax, fechaestmin, 
+					fechaestmax, idestadoselec, 
+					idcargoselec, idcanalselec, idvalidadoselec, p-1, this.paginacion);
+		}
 
 		System.out.println("Listado completo de entrevistados filtrado para la página " + p + " obtenido");
 
@@ -380,12 +474,7 @@ public class EntrevistadoController {
 		modelAndView.addObject("entrevistados",listaentrevistaspagina);
 		
 		System.out.println("Listado de entrevistas enviado a la vista");
-
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String roluser = "ROLE_USER";
-		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
-			roluser = "ROLE_ADMIN";
-		}
+		
 		modelAndView.addObject("roluser",roluser);
 		
 		return modelAndView;
@@ -425,10 +514,30 @@ public class EntrevistadoController {
 
 		System.out.println("Variables iniciales seteadas");
 		
+		String roluser = "ROLE_USER";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
+			roluser = "ROLE_ADMIN";
+		}
+		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+			roluser = "ROLE_SUPERADMIN";
+		}
+		
 		List<Entrevistado> listaentrevistas = new ArrayList<Entrevistado>();
 
-		listaentrevistas = entrevistadoServicio.buscarEntrevistadosFiltro(
-				nombres, appaterno, apmaterno, run);
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		cl.puertoesperanza.entrevistassa.modelo.User usuarioActual = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+		
+		System.out.println("Usuario obtenido: " + usuarioActual.getUsername());
+
+		if (roluser.equals("ROLE_USER")) {
+			listaentrevistas = entrevistadoServicio.buscarEntrevistadosFiltroUsuario(
+					nombres, appaterno, apmaterno, run, usuarioActual);
+		}
+		else {
+			listaentrevistas = entrevistadoServicio.buscarEntrevistadosFiltro(
+					nombres, appaterno, apmaterno, run);			
+		}
 
 		System.out.println("Listado completo de entrevistados filtrado obtenido");
 
@@ -440,21 +549,23 @@ public class EntrevistadoController {
 
 		List<Entrevistado> listaentrevistaspagina = new ArrayList<Entrevistado>();
 
-		listaentrevistaspagina = entrevistadoServicio.buscarEntrevistadosFiltroPagina(
-				nombres, appaterno, apmaterno, run, p-1, this.paginacion);
+		if (roluser.equals("ROLE_USER")) {
+			listaentrevistaspagina = entrevistadoServicio.buscarEntrevistadosFiltroUsuarioPagina(
+					nombres, appaterno, apmaterno, run, p-1, this.paginacion, usuarioActual);
+			
+		}else {
+			listaentrevistaspagina = entrevistadoServicio.buscarEntrevistadosFiltroPagina(
+					nombres, appaterno, apmaterno, run, p-1, this.paginacion);
+			
+		}
 
-		System.out.println("Listado completo de entrevistados filtrado para la página " + p + " obtenido");
+
+		//System.out.println("Listado completo de entrevistados filtrado para la página " + p + " obtenido");
 
 		modelAndView.addObject("entrevistados",listaentrevistaspagina);
 		
-		System.out.println("Listado de entrevistas enviado a la vista");
+		//System.out.println("Listado de entrevistas enviado a la vista");
 
-		
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String roluser = "ROLE_USER";
-		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
-			roluser = "ROLE_ADMIN";
-		}
 		modelAndView.addObject("roluser",roluser);
 		
 		return modelAndView;
@@ -555,7 +666,13 @@ public class EntrevistadoController {
 		System.out.println("Cliente: " + entrevistado.getCliente());
 		System.out.println("Reclutador: " + entrevistado.getReclutador());
 		entrevistado.setCliente(clienteServicio.obtenerClientePorId(entrevistado.getCliente().getId()));
-		entrevistado.setReclutador(reclutadorServicio.obtenerReclutadorPorId(entrevistado.getReclutador().getId()));
+		//entrevistado.setReclutador(reclutadorServicio.obtenerReclutadorPorId(entrevistado.getReclutador().getId()));
+
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		
+		System.out.println("Usuario: " + user.getUsername());
+		
+		entrevistado.setUsuario(usuarioServicio.obtenerUsuarioPorNombre(user.getUsername()));
 		
 		if (buscaEntrevistado.size() == 0) 
 		{
@@ -703,7 +820,7 @@ public class EntrevistadoController {
 		modelAndView.addObject("clientes",clienteServicio.obtenerClientes());
 		modelAndView.addObject("cargos",cargoServicio.obtenerCargos());
 		modelAndView.addObject("canales",canalServicio.obtenerCanales());
-		modelAndView.addObject("reclutadores",reclutadorServicio.obtenerReclutadores());
+		//modelAndView.addObject("reclutadores",reclutadorServicio.obtenerReclutadores());
 		modelAndView.addObject("regiones",regionServicio.obtenerRegiones());
 		modelAndView.addObject("instalaciones",instalacionServicio.obtenerInstalaciones());
 		//modelAndView.addObject("estados",Util.getEstados());
@@ -758,7 +875,8 @@ public class EntrevistadoController {
 			@RequestParam String txtFechaIngreso,
 			@RequestParam String txtFechaEstado,
 			@RequestParam String txtFechaContratacion,
-			@RequestParam String txtFechaNacimiento			
+			@RequestParam String txtFechaNacimiento,
+			@RequestParam String hdnUsername
 			) 
 	{
 		System.out.println("Comienza procesamiento de edición de registro de entrevista");
@@ -921,9 +1039,14 @@ public class EntrevistadoController {
 		cargo = cargoServicio.obtenerCargoPorId(entrevistado.getCargo().getId());
 		entrevistado.setCargo(cargo);
 
+		cl.puertoesperanza.entrevistassa.modelo.User usuarioCreador = usuarioServicio.obtenerUsuarioPorNombre(hdnUsername);
+		entrevistado.setUsuario(usuarioCreador);
+		
+		/*
 		Reclutador reclutador = new Reclutador();
 		reclutador = reclutadorServicio.obtenerReclutadorPorId(entrevistado.getReclutador().getId());
 		entrevistado.setReclutador(reclutador);
+		*/
 
 		System.out.println("Agrego cliente, cargo y reclutador");
 		
@@ -1114,6 +1237,19 @@ public class EntrevistadoController {
             XSSFWorkbook workbook = new XSSFWorkbook(flCargaBasica.getInputStream());
     		XSSFSheet sheet = workbook.getSheetAt(0);
     		
+    		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    		cl.puertoesperanza.entrevistassa.modelo.User usuarioAcceso = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+
+    		String roluser = "ROLE_USER";
+    		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    		
+    		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
+    			roluser = "ROLE_ADMIN";
+    		}
+    		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+    			roluser = "ROLE_SUPERADMIN";
+    		}
+
     		for(int i=1; i<sheet.getPhysicalNumberOfRows();i++) {
     			regTotales++;
 				XSSFRow row = sheet.getRow(i);
@@ -1190,7 +1326,7 @@ public class EntrevistadoController {
 					strCanal = "";
 				
 				Date fechaIngreso = new Date();
-				SimpleDateFormat ft = new SimpleDateFormat ("dd-MMM-yyyy");		
+				SimpleDateFormat ft = new SimpleDateFormat ("dd-MMM-yyyy");
 				
 				try 
 				{
@@ -1207,8 +1343,12 @@ public class EntrevistadoController {
 				entr = lentrevistados.busca(run);
 
 				if (entr != null) {
-
+					
 					entr.setFechaIngreso(fechaIngreso);
+					
+					if (!entr.getUsuario().getUsername().equals(user.getUsername()) && roluser.equals("ROLE_USER")) {
+						registroOk = false;
+					}
 					
 					if (lreclutadores.busca(strReclutador) != null)
 						entr.setReclutador(lreclutadores.busca(strReclutador));
@@ -1288,6 +1428,7 @@ public class EntrevistadoController {
 					
 					entr = new Entrevistado();
 					entr.setFechaIngreso(fechaIngreso);
+					entr.setUsuario(usuarioAcceso);
 					
 					if (lreclutadores.busca(strReclutador) != null)
 						entr.setReclutador(lreclutadores.busca(strReclutador));
@@ -1378,6 +1519,7 @@ public class EntrevistadoController {
 					entrx.setNombreCargo(strCargo);
 					entrx.setNombreComuna(strComuna);
 					entrx.setNombreCanal(strCanal);
+					entrx.setUsername(user.getUsername());
 					entErroneos.add(entrx);
 					regErroneos++;
 				}
@@ -1566,7 +1708,20 @@ public class EntrevistadoController {
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(flCargaCompleta.getInputStream());
     		XSSFSheet sheet = workbook.getSheetAt(0);
+
+    		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    		cl.puertoesperanza.entrevistassa.modelo.User usuarioAcceso = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+
+    		String roluser = "ROLE_USER";
+    		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     		
+    		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
+    			roluser = "ROLE_ADMIN";
+    		}
+    		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+    			roluser = "ROLE_SUPERADMIN";
+    		}
+
     		String strFechaIngreso = "";
     		String strReclutador = "";
     		String run = "";
@@ -1900,6 +2055,10 @@ public class EntrevistadoController {
 				entr = lentrevistados.busca(run);
 
 				if (entr != null) {
+					
+					if (!entr.getUsuario().getUsername().equals(user.getUsername()) && roluser.equals("ROLE_USER")) {
+						registroOk = false;
+					}
 
 					//Parte 1 de 5 (11 campos)
 					
@@ -2298,6 +2457,7 @@ public class EntrevistadoController {
 					//Parte 1 de 4 (11 campos)
 					
 					entr.setFechaIngreso(fechaIngreso);
+					entr.setUsuario(usuarioAcceso);
 					
 					if (lreclutadores.busca(strReclutador) != null)
 						entr.setReclutador(lreclutadores.busca(strReclutador));
@@ -2694,6 +2854,7 @@ public class EntrevistadoController {
 					entrx.setNombreCargo(strCargo);
 					entrx.setNombreComuna(strComuna);
 					entrx.setNombreCanal(strCanal);
+					entrx.setUsername(user.getUsername());
 					entErroneos.add(entrx);
 					regErroneos++;
 				}
@@ -2758,11 +2919,25 @@ public class EntrevistadoController {
         int runModificados = 0;
         int regSinModificar = 0;
         int valorNoExiste = 0;
+        int runNoPertenece = 0;
         
         try {
             XSSFWorkbook workbook = new XSSFWorkbook(flCambiaEstado.getInputStream());
     		XSSFSheet sheet = workbook.getSheetAt(0);
+
+    		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    		//cl.puertoesperanza.entrevistassa.modelo.User usuarioAcceso = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+
+    		String roluser = "ROLE_USER";
+    		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     		
+    		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
+    			roluser = "ROLE_ADMIN";
+    		}
+    		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+    			roluser = "ROLE_SUPERADMIN";
+    		}
+
     		for(int i=1; i<sheet.getPhysicalNumberOfRows();i++) {
     			regTotales++;
 				XSSFRow row = sheet.getRow(i);
@@ -2778,14 +2953,22 @@ public class EntrevistadoController {
 					//System.out.println(entr.getIdEntrevistado() + " " + entr.getValidado() + " " + lvalidados.busca(strValidado).getId());
 					
 					if (lvalidados.busca(strValidado).getId() > 0) {
-						if (entr.getValidado() != lvalidados.busca(strValidado).getId()) {
-							entr.setValidado(lvalidados.busca(strValidado).getId());
-							entModificados.add(entr);
-							runModificados++;
+						
+						if (user.getUsername().equals(entr.getUsuario().getUsername()) || !roluser.equals("ROLE_USER")) {
+
+							if (entr.getValidado() != lvalidados.busca(strValidado).getId()) {
+								entr.setValidado(lvalidados.busca(strValidado).getId());
+								entModificados.add(entr);
+								runModificados++;
+							}
+							else {
+								regSinModificar++;
+							}
+							
 						}
 						else {
-							regSinModificar++;
-						}						
+							runNoPertenece++;
+						}
 					}
 					else {
 						valorNoExiste++;
@@ -2798,12 +2981,14 @@ public class EntrevistadoController {
     		
     		System.out.println("Registros totales: " + regTotales);
     		System.out.println("RUN no existe: " + runNoExiste);
+    		System.out.println("RUN no le pertenece: " + runNoPertenece);
     		System.out.println("RUN modificados: " + runModificados);
     		System.out.println("Registros no modificados: " + regSinModificar);
     		System.out.println("Estado no existente: " + valorNoExiste);
     		
     		modelAndView.addObject("regTotales",regTotales);
     		modelAndView.addObject("runNoExiste",runNoExiste);
+    		modelAndView.addObject("runNoPertenece",runNoPertenece);
     		modelAndView.addObject("runModificados",runModificados);
     		modelAndView.addObject("regSinModificar",regSinModificar);
     		modelAndView.addObject("valorNoExiste",valorNoExiste);
@@ -2869,6 +3054,8 @@ public class EntrevistadoController {
         response.setContentType("application/octet-stream");
         DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
+        
+        System.out.println("Inicio: " + currentDateTime);
          
         String headerKey = "Content-Disposition";
         String headerValue = "attachment; filename=postulantes_" + currentDateTime + ".xlsx";
@@ -2888,24 +3075,41 @@ public class EntrevistadoController {
 		String fechalimitestr = sdf.format(fechalimite);
 
 		System.out.println("Fecha límite: " + fechalimitestr);
+
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		//cl.puertoesperanza.entrevistassa.modelo.User usuarioAcceso = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+
+		String roluser = "ROLE_USER";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		
-		List<EntrevistadoVista> lentrevistadosvista = new ArrayList<EntrevistadoVista>();
-		
-		/*
 		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
-			lentrevistadosvista = entrevistadoVistaServicio.obtenerEntrevistadosVista();
-			System.out.println("Ingresé como administrador");
+			roluser = "ROLE_ADMIN";
+		}
+		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+			roluser = "ROLE_SUPERADMIN";
+		}
+
+        String fecha2 = dateFormatter.format(new Date());        
+        System.out.println("Antes del listado: " + fecha2);
+
+		List<EntrevistadoVista> lentrevistadosvista = new ArrayList<EntrevistadoVista>();
+
+		if (roluser.equals("ROLE_USER")) {
+			lentrevistadosvista = entrevistadoVistaServicio.obtenerEntrevistadosVistaUsuario(user.getUsername());
 		}
 		else {
-			lentrevistadosvista = entrevistadoVistaServicio.obtenerEntrevistadosVistaFiltroDias(fechalimitestr);
-			System.out.println("Ingresé como usuario normal");
-		}*/
+			lentrevistadosvista = entrevistadoVistaServicio.obtenerEntrevistadosVista();
+		}
 
-		lentrevistadosvista = entrevistadoVistaServicio.obtenerEntrevistadosVista();
+        String fecha3 = dateFormatter.format(new Date());        
+        System.out.println("Despues del listado: " + fecha3);
 
         //UserExcelExporter excelExporter = new UserExcelExporter(listaentrevistados);
         EntrevistadoExcelExporter excelExporter = new EntrevistadoExcelExporter(lentrevistadosvista);
-        
+
+        String fecha4 = dateFormatter.format(new Date());        
+        System.out.println("Fin: " + fecha4);
+
         excelExporter.export(response);
     }
 
@@ -2913,7 +3117,7 @@ public class EntrevistadoController {
     public void exportToExcelFilter(
     		HttpServletResponse response,
 			@RequestParam(defaultValue = "") String e, 
-			@RequestParam(defaultValue = "0") Integer r, 
+			@RequestParam(defaultValue = "") String u, 
 			@RequestParam(defaultValue = "") String fn, 
 			@RequestParam(defaultValue = "") String fx,	
 			@RequestParam(defaultValue = "") String fne, 
@@ -2954,13 +3158,19 @@ public class EntrevistadoController {
 			idcanalselec = n;
 			//canal = canalServicio.obtenerCanalPorId(idcanalselec);
 		} 
+		
+		String usernameselec = "";
+		if (u.trim().length() > 0) {
+			usernameselec = u;
+		}
 
+		/*
 		Integer idreclutadorselec = 0;
 		//Reclutador reclutador = new Reclutador();
 		if (r > 0) {
 			idreclutadorselec = r;
 			//reclutador = reclutadorServicio.obtenerReclutadorPorId(idreclutadorselec);
-		} 
+		}*/ 
 		
 		Integer idestadoselec = 0;
 		if (t > 0) 
@@ -3002,12 +3212,38 @@ public class EntrevistadoController {
 
 		System.out.println("Fecha límite: " + fechalimitestr);
 
+
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		//cl.puertoesperanza.entrevistassa.modelo.User usuarioAcceso = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+
+		String roluser = "ROLE_USER";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		
+		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
+			roluser = "ROLE_ADMIN";
+		}
+		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+			roluser = "ROLE_SUPERADMIN";
+		}
+		
 		List<EntrevistadoVista> lentrevistasvistafiltro = new ArrayList<EntrevistadoVista>();
 
-		lentrevistasvistafiltro = entrevistadoVistaServicio.buscarEntrevistadosVista(
-				empresa, idreclutadorselec, fechamin, fechamax, fechaestmin, 
-				fechaestmax, idestadoselec, idcargoselec, idcanalselec, 
-				idvalidadoselec);
+		if (roluser.equals("ROLE_USER")) {
+			
+			lentrevistasvistafiltro = entrevistadoVistaServicio.buscarEntrevistadosUsuario(
+					empresa, usernameselec, fechamin, fechamax, fechaestmin, 
+					fechaestmax, idestadoselec, idcargoselec, idcanalselec, 
+					idvalidadoselec, user.getUsername());
+			
+		}
+		else {
+			
+			lentrevistasvistafiltro = entrevistadoVistaServicio.buscarEntrevistados(
+					empresa, usernameselec, fechamin, fechamax, fechaestmin, 
+					fechaestmax, idestadoselec, idcargoselec, idcanalselec, 
+					idvalidadoselec);
+			
+		}
 
 		/*
 		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
@@ -3073,18 +3309,39 @@ public class EntrevistadoController {
 			tipoMensaje = "Error";
 		}
 
-		long cantTotal = entrevistadoServicio.obtenerEntrevistados().size();
+		String roluser = "ROLE_USER";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		cl.puertoesperanza.entrevistassa.modelo.User usuarioAcceso = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+		
+		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
+			roluser = "ROLE_ADMIN";
+		}
+		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+			roluser = "ROLE_SUPERADMIN";
+		}
+
+		long cantTotal = 0;
+		
+		if (roluser.equals("ROLE_USER")) {
+			cantTotal = entrevistadoServicio.obtenerEntrevistadosPorUsuario(usuarioAcceso).size();
+		}
+		else {
+			cantTotal = entrevistadoServicio.obtenerEntrevistados().size();
+		}
+		
 		modelAndView.addObject("paginas", Util.getArregloPaginas(p, (int) entrevistadoServicio.getPageCount(cantTotal, this.paginacion)));
 		modelAndView.addObject("paginaActual",p);
 		
 		List<Entrevistado> listaentrevistados = new ArrayList<Entrevistado>();
-		listaentrevistados = entrevistadoServicio.getPage(p-1, this.paginacion);
-
-		String roluser = "ROLE_USER";
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
-			roluser = "ROLE_ADMIN";
+		
+		if (roluser.equals("ROLE_USER")) {
+			listaentrevistados = entrevistadoServicio.getPageUser(p-1, this.paginacion, usuarioAcceso);
 		}
+		else {
+			listaentrevistados = entrevistadoServicio.getPage(p-1, this.paginacion);			
+		}
+		
 		
 		modelAndView.addObject("roluser",roluser);
 
@@ -3111,6 +3368,18 @@ public class EntrevistadoController {
 		String mensaje = "";
 		String tipoMensaje = "";
 
+		String roluser = "ROLE_USER";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		//cl.puertoesperanza.entrevistassa.modelo.User usuarioAcceso = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+		
+		if (auth.getAuthorities().toString().contains("ROLE_ADMIN")) {
+			roluser = "ROLE_ADMIN";
+		}
+		else if (auth.getAuthorities().toString().contains("ROLE_SUPERADMIN")) {
+			roluser = "ROLE_SUPERADMIN";
+		}
+		
 		//Nacionalidad nacionalidad = new Nacionalidad();
 		//nacionalidad = nacionalidadServicio.obtenerNacionalidadPorId(idNacionalidad);
 
@@ -3140,12 +3409,27 @@ public class EntrevistadoController {
 			tipoMensaje = "Error";
 		}
 
-		long cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVista().size();
+		long cantTotal = 0;
+		
+		if (roluser.equals("ROLE_USER")) {
+			cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVistaUsuario(user.getUsername()).size();
+		}
+		else {
+			cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVista().size();
+		}
+		
 		modelAndView.addObject("paginas", Util.getArregloPaginas(p, (int) entrevistadoVistaServicio.getPageCount(cantTotal, this.paginacion)));
 		modelAndView.addObject("paginaActual",p);
 		
 		List<EntrevistadoVista> listaentrevistados = new ArrayList<EntrevistadoVista>();
-		listaentrevistados = entrevistadoVistaServicio.getPage(p-1, this.paginacion);
+		//listaentrevistados = entrevistadoVistaServicio.getPage(p-1, this.paginacion);
+		
+		if (roluser.equals("ROLE_USER")) {
+			listaentrevistados = entrevistadoVistaServicio.getPageUsuario(p-1, this.paginacion, user.getUsername());
+		}
+		else {
+			listaentrevistados = entrevistadoVistaServicio.getPage(p-1, this.paginacion);
+		}
 
 		/*
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -3154,7 +3438,6 @@ public class EntrevistadoController {
 		}
 		*/
 		
-		String roluser = "ROLE_ADMIN";
 		modelAndView.addObject("roluser",roluser);
 
 		modelAndView.addObject("idcargoselec",0);

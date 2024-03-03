@@ -273,6 +273,7 @@ public abstract class Util {
 		//Grupo 12 (2 campos)
 		elim.setEntrevistadorId(entr.getEntrevistadorId());
 		elim.setNombreEntrevistador(entr.getNombreEntrevistador());
+		elim.setUsername(entr.getUsername());
 
 		return elim;
 		

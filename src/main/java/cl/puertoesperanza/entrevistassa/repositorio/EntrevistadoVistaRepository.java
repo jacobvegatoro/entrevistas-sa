@@ -2,6 +2,8 @@ package cl.puertoesperanza.entrevistassa.repositorio;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -22,5 +24,9 @@ public interface EntrevistadoVistaRepository extends
 			value = "select * from vw_entrevistado e where e.fecha_ingreso_rv >= :fechaingreso", 
 			nativeQuery = true)
 	List<EntrevistadoVista> findIngresoFiltrado(@Param("fechaingreso") String fechaingreso);
+	
+	List<EntrevistadoVista> findByUsername(String username);
+
+	Page<EntrevistadoVista> findByUsername(String username, Pageable pageable);
 	
 }
