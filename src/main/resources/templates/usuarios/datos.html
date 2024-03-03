@@ -1,0 +1,128 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>Plataforma de administración de entrevistas</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" th:href="@{/ima/icon-admin.png}" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link th:href="@{/css/estilos.css}" rel="stylesheet" />
+  </head>
+  <body>
+    <header class="container bg-dark">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a class="navbar-brand" href="/inicio">Sales Action</a>
+            <button class="navbar-toggler d-lg-none" type="button" data-toggle="collapse" data-target="#collapsibleNavId" aria-controls="collapsibleNavId"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavId">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/inicio">Inicio <span class="sr-only">(actual)</span></a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Listado</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="/entrevistas/listadobusqueda">Búsqueda</a>
+                            <a class="dropdown-item" href="/entrevistas/listadoexportar">Exportar</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Registro</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="/entrevistas/registro">Único</a>
+                            <a class="dropdown-item" href="/entrevistas/cargamasiva">Masivo</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Actualización</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="/entrevistas/actmasiva">Validados</a>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown active">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownId" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mantenedores</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownId">
+                            <a class="dropdown-item" href="/clientes">Clientes</a>
+                            <a class="dropdown-item" href="/reclutadores">Reclutadores</a>
+                            <a class="dropdown-item" href="/instalaciones">Instalaciones</a>
+                            <a class="dropdown-item" href="/cargos">Cargos</a>
+                            <a class="dropdown-item" href="/nacionalidades">Nacionalidades</a>
+                            <a class="dropdown-item" href="/estados">Estados</a>
+                            <a class="dropdown-item" href="/usuarios">Usuarios</a>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+						<form name="frmsalir" th:action="@{/logout}" method="POST">
+						</form>
+                        <a class="nav-link" href="#" onclick="menusalir()">Salir</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main class="container bg-white px-4 pb-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="jumbotron">
+                    <h1 class="display-4">Mis datos</h1>
+                    <p class="lead">Sección para actualizar datos personales</p>
+                    <hr class="my-0">
+                </div>
+            </div>
+        </div>
+        <div class="row" th:if="${mensaje != ''}">
+        	<div class="col-md-12">
+				<div th:if="${tipoMensaje == 'Ok'}" class="alert alert-success" role="alert">
+				  <span th:text="${mensaje}"></span>
+				</div>
+				<div th:if="${tipoMensaje == 'Error'}" class="alert alert-danger" role="alert">
+				  <span th:text="${mensaje}"></span>
+				</div>
+        	</div>
+        </div>
+        <div class="row mt-4">
+            <div class="col-md-12">
+				<h3>Modificar mi clave</h3>
+                <form th:action="@{/usuarios/actualizardatos}" method="post" name="frmmisdatos">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label for="txtClaveActual">Ingrese clave actual (*)</label>
+                            <input type="password" class="form-control" id="txtClaveActual" name="txtClaveActual" th:value="${claveActual}">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtClaveUno">Ingrese clave nueva (*)</label>
+                            <input type="password" class="form-control" id="txtClaveUno" name="txtClaveUno" th:value="${claveUno}">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtClaveDos">Repita clave nueva (*)</label>
+                            <input type="password" class="form-control" id="txtClaveDos" name="txtClaveDos" th:value="${claveDos}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary">Cambiar mi clave</button>
+                        </div>
+                    </div>
+				</form>
+			</div>
+		</div> 
+		       
+    </main>
+    <footer class="container-fluid text-center p-3 bg-dark text-light">
+        &copy; 2024 - Sistema creado para Sales Action 
+    </footer>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+    <script th:src="@{/js/menu.js}"></script>
+    <script th:src="@{/js/usuarios/editar.js}"></script>
+  </body>
+</html>

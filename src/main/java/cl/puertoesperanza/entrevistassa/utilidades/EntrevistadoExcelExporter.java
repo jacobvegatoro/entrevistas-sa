@@ -125,13 +125,11 @@ public class EntrevistadoExcelExporter {
         cell.setCellStyle(style);
     }
     
-    private void createCellInteger(Row row, int columnCount, Integer value, CellStyle style) {
+    private void createCellInteger(Row row, int columnCount, Integer value, Cell cell) {
         //sheet.autoSizeColumn(columnCount);
-        Cell cell = row.createCell(columnCount);
+        cell = row.createCell(columnCount);
         cell.setCellValue(value);
-        cell.setCellStyle(style);
     }
-
     
     private void createCellIntegerV2(Row row, int columnCount, Integer value, CellStyle style, Cell cell) {
         //sheet.autoSizeColumn(columnCount);
@@ -140,11 +138,11 @@ public class EntrevistadoExcelExporter {
         cell.setCellStyle(style);
     }
 
-    private void createCellString(Row row, int columnCount, String value, CellStyle style) {
+    private void createCellString(Row row, int columnCount, String value, Cell cell) {
         //sheet.autoSizeColumn(columnCount);
-        Cell cell = row.createCell(columnCount);
+        cell = row.createCell(columnCount);
         cell.setCellValue(value);
-        cell.setCellStyle(style);
+        //cell.setCellStyle(style);
     }
 
     private void createCellStringV2(Row row, int columnCount, String value, CellStyle style, Cell cell) {
@@ -154,8 +152,8 @@ public class EntrevistadoExcelExporter {
         cell.setCellStyle(style);
     }
 
-    private void createCellDate(Row row, int columnCount, String value, CellStyle style) {
-        Cell cell = row.createCell(columnCount);
+    private void createCellDate(Row row, int columnCount, String value, Cell cell) {
+        cell = row.createCell(columnCount);
         
         if (value.trim().length() > 0) {
             Date fecha = new Date();
@@ -172,7 +170,7 @@ public class EntrevistadoExcelExporter {
         	cell.setCellValue(value);
         }
         
-        cell.setCellStyle(style);
+        //cell.setCellStyle(style);
     }
 
     private void createCellDateV2(Row row, int columnCount, String value, CellStyle style, Cell cell) {
@@ -220,12 +218,14 @@ public class EntrevistadoExcelExporter {
 
             //createCellIntegerV2(row, columnCount++, evista.getIdEntrevistado(), style, celda);
             celda = row.createCell(columnCount++);
+            celda.setCellStyle(styleRegular);
             celda.setCellValue(evista.getIdEntrevistado());
-            celda.setCellStyle(style);
             
             style = styleDate;
+            //celda.setCellStyle(styleDate);
             createCellDateV2(row, columnCount++, evista.getFechaIngreso(), style, celda);
             style = styleRegular;
+            //celda.setCellStyle(styleRegular);
             createCellStringV2(row, columnCount++, evista.getUsername(), style, celda);
             createCellStringV2(row, columnCount++, evista.getRun(), style, celda);
             createCellStringV2(row, columnCount++, evista.getNombreCliente(), style, celda);

@@ -22,6 +22,20 @@ $(document).ready(function(){
 	);
 
 	$.validator.addMethod(
+		"misClavesIguales", 
+		function(value, element) {
+			var clave = $("#txtClaveUno").val();
+			if (clave == value){
+				return true;
+			}
+			else{
+				return false;
+			}
+		},
+		"Las claves deben ser iguales."
+	);
+
+	$.validator.addMethod(
 		"textoSinEspacios", 
 		function(value, element) {
 			var texto = value.replace(' ','');
@@ -199,5 +213,50 @@ $(document).ready(function(){
       form.submit();
     }
   });
+
+  $("form[name='frmmisdatos']").validate({
+    rules: {
+		txtClaveActual: {
+			required: true,
+			minlength: 8,
+			maxlength: 30
+		},
+		txtClaveUno: {
+			required: true,
+			minlength: 8,
+			maxlength: 30
+		},
+		txtClaveDos: {
+			required: true,
+			misClavesIguales: true,
+			minlength: 8,
+			maxlength: 30
+		}
+    },
+    messages: {
+		txtClaveActual:{
+			required: "Ingresa la clave actual",
+			minlength: "El largo mínimo es de 8 caracteres",
+			maxlength: "El largo máximo es de 30 caracteres"
+		},
+		txtClaveUno:{
+			required: "Ingresa la nueva clave",
+			minlength: "El largo mínimo es de 8 caracteres",
+			maxlength: "El largo máximo es de 30 caracteres"
+		},
+		txtClaveDos:{
+			required: "Ingresa nuevamente la nueva clave",
+			misClavesIguales: "Las claves ingresadas deben ser iguales",
+			minlength: "El largo mínimo es de 8 caracteres",
+			maxlength: "El largo máximo es de 30 caracteres"
+		}
+    },
+    // Make sure the form is submitted to the destination defined
+    // in the "action" attribute of the form when valid
+    submitHandler: function(form) {
+      form.submit();
+    }
+  });
+
 
 });

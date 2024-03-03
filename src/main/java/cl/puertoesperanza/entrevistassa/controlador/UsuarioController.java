@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -164,8 +165,124 @@ public class UsuarioController {
 		
 		return modelAndView;
 	}
-	
 
+	@GetMapping("/datos")
+	public ModelAndView actualizarDatosUsuario() 
+	{
+		ModelAndView modelAndView = new ModelAndView("usuarios/datos");
+
+		String mensaje = "";
+		String tipoMensaje = "";
+		String rol = "";
+
+		String claveActual = "";
+		String claveUno = "";
+		String claveDos = "";
+
+		org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+		User usuario = usuarioService.obtenerUsuarioPorNombre(user.getUsername());
+		
+		if (usuario == null) {
+			System.out.println("Error al editar el usuario - Usuario no existe");
+			mensaje = "El usuario no existe en plataforma, no se puede realizar la operación";
+			tipoMensaje = "Error";
+		}
+		else {
+			Set<UserRole> roles = usuario.getUserRole();
+			for (UserRole r:roles) {
+				rol = r.getRole();
+			}
+		}
+		
+		modelAndView.addObject("claveActual", claveActual);
+		modelAndView.addObject("claveUno", claveUno);
+		modelAndView.addObject("claveDos", claveDos);
+		
+		modelAndView.addObject("usuario", usuario);
+		modelAndView.addObject("rol", rol);
+		modelAndView.addObject("mensaje", mensaje);
+		modelAndView.addObject("tipoMensaje", tipoMensaje);
+		
+		return modelAndView;
+	}
+
+	@PostMapping("/actualizardatos")
+	public ModelAndView cambiarMiClave(
+			@RequestParam String txtClaveActual,
+			@RequestParam String txtClaveUno,
+			@RequestParam String txtClaveDos
+			)
+	{
+		ModelAndView modelAndView = new ModelAndView("usuarios/datos");
+
+		String mensaje = "";
+		String tipoMensaje = "";
+		String rol = "";
+
+		String claveActual = "";
+		String claveUno = "";
+		String claveDos = "";
+
+		org.springframework.security.core.userdetails.User user = (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
+		User usuario = usuarioService.obtenerUsuarioPorNombre(user.getUsername());
+		
+		if (usuario != null) {
+			
+			BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
+
+			if (pe.matches(txtClaveActual, usuario.getPassword())) {
+
+				usuario.setPassword(pe.encode(txtClaveUno));
+				User newUser = usuarioService.crearUsuario(usuario);
+				
+				if (newUser != null) {
+					System.out.println("Usuario editado correctamente");
+					mensaje = "El usuario ha sido editado correctamente";
+					tipoMensaje = "Ok";
+				}
+				else 
+				{
+					System.out.println("Error al editar el usuario");
+					mensaje = "Ocurrió un error al editar el usuario";
+					tipoMensaje = "Error";
+				}
+				
+			}
+			else {
+				mensaje = "La clave actual ingresada no es correcta";
+				tipoMensaje = "Error";
+			}
+
+		}
+		else {
+			System.out.println("Error al editar el usuario - Usuario no existe");
+			mensaje = "El usuario no existe en plataforma, no se puede editar";
+			tipoMensaje = "Error";
+			modelAndView.addObject("usuario", usuario);
+		}
+		
+		if (tipoMensaje.equals("Error")) {
+			claveActual = txtClaveActual;
+			claveUno = txtClaveUno;
+			claveDos = txtClaveDos;
+		}
+		else {
+			claveActual = "";
+			claveUno = "";
+			claveDos = "";
+		}
+		
+		modelAndView.addObject("claveActual", claveActual);
+		modelAndView.addObject("claveUno", claveUno);
+		modelAndView.addObject("claveDos", claveDos);
+		
+		modelAndView.addObject("rol", rol);
+		modelAndView.addObject("mensaje", mensaje);
+		modelAndView.addObject("tipoMensaje", tipoMensaje);
+
+		return modelAndView;
+	}
+	
 	@PostMapping("/clave")
 	public ModelAndView cambiarClave(
 			@RequestParam String txtClave,
