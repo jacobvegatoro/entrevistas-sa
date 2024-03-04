@@ -34,7 +34,7 @@ build/
 .vscode/
 
 ### Otros ###
-*.properties
+#*.properties
 **/.DS_Store
 *.DS_Store
 .ebextensions/
