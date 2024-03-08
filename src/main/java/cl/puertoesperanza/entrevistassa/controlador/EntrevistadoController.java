@@ -597,12 +597,12 @@ public class EntrevistadoController {
 		modelAndView.addObject("clientes",clienteServicio.obtenerClientes());
 		modelAndView.addObject("cargos",cargoServicio.obtenerCargos());
 		modelAndView.addObject("canales",canalServicio.obtenerCanales());
-		modelAndView.addObject("reclutadores",reclutadorServicio.obtenerReclutadores());
+		//modelAndView.addObject("reclutadores",reclutadorServicio.obtenerReclutadores());
 		modelAndView.addObject("regiones",regionServicio.obtenerRegiones());
 
 		System.out.println("Se envian listas de elementos a la vista");
 		
-		Entrevistado entrevistado = new Entrevistado();	
+		Entrevistado entrevistado = new Entrevistado();
 		entrevistado.setFechaIngreso(new Date());
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
