@@ -199,19 +199,26 @@ public class EntrevistadoController {
 			roluser = "ROLE_SUPERADMIN";
 		}
 
-		List<Entrevistado> listaentrevistados = new ArrayList<Entrevistado>();
+		List<EntrevistadoVista> listaentrevistados = new ArrayList<EntrevistadoVista>();
 		
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();		
 		long cantTotal = 0;
+		int inicio = (p-1) * this.paginacion;
 		
 		if (roluser.equals("ROLE_USER")) {
-			cl.puertoesperanza.entrevistassa.modelo.User usuarioActual = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
-			cantTotal = entrevistadoServicio.obtenerEntrevistadosPorUsuario(usuarioActual).size();
-			listaentrevistados = entrevistadoServicio.getPageUser(p-1, this.paginacion, usuarioActual);
+			//cl.puertoesperanza.entrevistassa.modelo.User usuarioActual = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+			//cantTotal = entrevistadoServicio.obtenerEntrevistadosPorUsuario(usuarioActual).size();
+			cantTotal = entrevistadoVistaServicio.obtenerCantidadRegistrosUsuario(user.getUsername());
+			//listaentrevistados = entrevistadoServicio.getPageUser(p-1, this.paginacion, usuarioActual);
+			listaentrevistados = entrevistadoVistaServicio.obtenerRegistrosPaginaUsuario(this.paginacion, inicio, user.getUsername());
 		}
 		else {
-			cantTotal = entrevistadoServicio.obtenerEntrevistados().size();			
-			listaentrevistados = entrevistadoServicio.getPage(p-1, this.paginacion);
+			//cantTotal = entrevistadoServicio.obtenerEntrevistados().size();
+			//cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVista().size();
+			cantTotal = entrevistadoVistaServicio.obtenerCantidadRegistros();
+			//listaentrevistados = entrevistadoServicio.getPage(p-1, this.paginacion);
+			//listaentrevistados = entrevistadoServicio.getPage(p-1, this.paginacion);
+			listaentrevistados = entrevistadoVistaServicio.obtenerRegistrosPagina(this.paginacion, inicio);
 		}
 
 		modelAndView.addObject("paginas", Util.getArregloPaginas(p, (int) entrevistadoServicio.getPageCount(cantTotal, this.paginacion)));
@@ -257,14 +264,19 @@ public class EntrevistadoController {
 		List<EntrevistadoVista> listaentrevistados = new ArrayList<EntrevistadoVista>();
 		
 		long cantTotal = 0;
+		int inicio = (p-1)*this.paginacion;
 		
 		if (roluser.equals("ROLE_USER")) {
-			cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVistaUsuario(user.getUsername()).size();
-			listaentrevistados = entrevistadoVistaServicio.getPageUsuario(p-1, this.paginacion, user.getUsername());
+			//cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVistaUsuario(user.getUsername()).size();
+			cantTotal = entrevistadoVistaServicio.obtenerCantidadRegistrosUsuario(user.getUsername());
+			//listaentrevistados = entrevistadoVistaServicio.getPageUsuario(p-1, this.paginacion, user.getUsername());
+			listaentrevistados = entrevistadoVistaServicio.obtenerRegistrosPaginaUsuario(this.paginacion, inicio, user.getUsername());
 		}
 		else {
-			cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVista().size();
-			listaentrevistados = entrevistadoVistaServicio.getPage(p-1, this.paginacion);
+			//cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVista().size();
+			cantTotal = entrevistadoVistaServicio.obtenerCantidadRegistros();
+			//listaentrevistados = entrevistadoVistaServicio.getPage(p-1, this.paginacion);
+			listaentrevistados = entrevistadoVistaServicio.obtenerRegistrosPagina(this.paginacion, inicio);
 		}
 		
 		modelAndView.addObject("paginas", Util.getArregloPaginas(p, (int) entrevistadoVistaServicio.getPageCount(cantTotal, this.paginacion)));
@@ -429,16 +441,18 @@ public class EntrevistadoController {
 
 		System.out.println("Variables iniciales seteadas");
 		
-		List<EntrevistadoVista> listaentrevistas = new ArrayList<EntrevistadoVista>();
+		//List<EntrevistadoVista> listaentrevistas = new ArrayList<EntrevistadoVista>();
 
+		long cantRegistros = 0;
+		
 		if (roluser.equals("ROLE_USER")) {
-			listaentrevistas = entrevistadoVistaServicio.buscarEntrevistadosUsuario(
+			cantRegistros = entrevistadoVistaServicio.contarBuscarEntrevistadosUsuario(
 					empresa, usernameselec, fechamin, fechamax, fechaestmin, 
 					fechaestmax, idestadoselec, 
 					idcargoselec, idcanalselec, idvalidadoselec, user.getUsername());
 		}
 		else {
-			listaentrevistas = entrevistadoVistaServicio.buscarEntrevistados(
+			cantRegistros = entrevistadoVistaServicio.contarBuscarEntrevistados(
 					empresa, usernameselec, fechamin, fechamax, fechaestmin, 
 					fechaestmax, idestadoselec, 
 					idcargoselec, idcanalselec, idvalidadoselec);
@@ -446,7 +460,7 @@ public class EntrevistadoController {
 
 		System.out.println("Listado completo de entrevistados filtrado obtenido");
 
-		Integer cantPaginas = (int) entrevistadoVistaServicio.getPageCount(listaentrevistas.size(),this.paginacion);
+		Integer cantPaginas = (int) entrevistadoVistaServicio.getPageCount(cantRegistros, this.paginacion);
 		if (p > cantPaginas && cantPaginas > 0)
 			p = cantPaginas;
 		modelAndView.addObject("paginas",Util.getArregloPaginas(p, cantPaginas));
@@ -523,39 +537,42 @@ public class EntrevistadoController {
 			roluser = "ROLE_SUPERADMIN";
 		}
 		
-		List<Entrevistado> listaentrevistas = new ArrayList<Entrevistado>();
+		//List<Entrevistado> listaentrevistas = new ArrayList<Entrevistado>();
 
 		User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		cl.puertoesperanza.entrevistassa.modelo.User usuarioActual = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
+		//cl.puertoesperanza.entrevistassa.modelo.User usuarioActual = usuarioServicio.obtenerUsuarioPorNombre(user.getUsername());
 		
-		System.out.println("Usuario obtenido: " + usuarioActual.getUsername());
+		//System.out.println("Usuario obtenido: " + usuarioActual.getUsername());
 
+		long cantRegistros = 0;
 		if (roluser.equals("ROLE_USER")) {
-			listaentrevistas = entrevistadoServicio.buscarEntrevistadosFiltroUsuario(
-					nombres, appaterno, apmaterno, run, usuarioActual);
+			cantRegistros = entrevistadoVistaServicio.contarFiltrarRegistrosUsuario(
+					nombres, appaterno, apmaterno, run, user.getUsername());
 		}
 		else {
-			listaentrevistas = entrevistadoServicio.buscarEntrevistadosFiltro(
-					nombres, appaterno, apmaterno, run);			
+			cantRegistros = entrevistadoVistaServicio.contarFiltrarRegistros(
+					nombres, appaterno, apmaterno, run);
 		}
 
 		System.out.println("Listado completo de entrevistados filtrado obtenido");
 
-		Integer cantPaginas = (int) entrevistadoServicio.getPageCount(listaentrevistas.size(),this.paginacion);
+		Integer cantPaginas = (int) entrevistadoServicio.getPageCount(cantRegistros,this.paginacion);
 		if (p > cantPaginas && cantPaginas > 0)
 			p = cantPaginas;
 		modelAndView.addObject("paginas",Util.getArregloPaginas(p, cantPaginas));
 		modelAndView.addObject("paginaActual",p);
 
-		List<Entrevistado> listaentrevistaspagina = new ArrayList<Entrevistado>();
+		List<EntrevistadoVista> listaentrevistaspagina = new ArrayList<EntrevistadoVista>();
 
 		if (roluser.equals("ROLE_USER")) {
-			listaentrevistaspagina = entrevistadoServicio.buscarEntrevistadosFiltroUsuarioPagina(
-					nombres, appaterno, apmaterno, run, p-1, this.paginacion, usuarioActual);
+			//listaentrevistaspagina = entrevistadoServicio.buscarEntrevistadosFiltroUsuarioPagina(
+			//		nombres, appaterno, apmaterno, run, p-1, this.paginacion, usuarioActual);
+			listaentrevistaspagina = entrevistadoVistaServicio.filtrarRegistrosPaginaUsuario(
+					nombres, appaterno, apmaterno, run, (p-1), this.paginacion, user.getUsername());
 			
 		}else {
-			listaentrevistaspagina = entrevistadoServicio.buscarEntrevistadosFiltroPagina(
-					nombres, appaterno, apmaterno, run, p-1, this.paginacion);
+			listaentrevistaspagina = entrevistadoVistaServicio.filtrarRegistrosPagina(
+					nombres, appaterno, apmaterno, run, (p-1), this.paginacion);
 			
 		}
 

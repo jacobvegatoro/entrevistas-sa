@@ -149,7 +149,7 @@ public class EntrevistadoExcelExporter {
         //sheet.autoSizeColumn(columnCount);
         cell = row.createCell(columnCount);
         cell.setCellValue(value);
-        cell.setCellStyle(style);
+        //cell.setCellStyle(style);
     }
 
     private void createCellDate(Row row, int columnCount, String value, Cell cell) {

@@ -46,5 +46,31 @@ public interface EntrevistadoVistaService {
 			String fechamin, String fechamax, String fechaestmin, String fechaestmax, 
 			Integer idestado, Integer idcargo, Integer idcanal, Integer idvalidado, 
 			Integer pagina, Integer cantidad, String usuario);
+	
+	List<EntrevistadoVista> obtenerRegistrosPagina(Integer cantidad, Integer inicio);
+
+	List<EntrevistadoVista> obtenerRegistrosPaginaUsuario(Integer cantidad, Integer inicio, String username);
+
+	long obtenerCantidadRegistros();
+
+	long obtenerCantidadRegistrosUsuario(String username);
+
+	List<EntrevistadoVista> filtrarRegistrosPagina(String nombres, String appaterno, String apmaterno, String run, 
+			Integer pagina, Integer cantidad);
+
+	List<EntrevistadoVista> filtrarRegistrosPaginaUsuario(String nombres, String appaterno, String apmaterno, String run, 
+			Integer pagina, Integer cantidad, String username);
+
+	long contarFiltrarRegistros(String nombres, String appaterno, String apmaterno, String run);
+
+	long contarFiltrarRegistrosUsuario(String nombres, String appaterno, String apmaterno, String run, String username);
+
+	long contarBuscarEntrevistados(String empresa, String username, 
+			String fechamin, String fechamax, String fechaestmin, String fechaestmax, 
+			Integer idestado, Integer idcargo, Integer idcanal, Integer idvalidado);
+	
+	long contarBuscarEntrevistadosUsuario(String empresa, String username, 
+			String fechamin, String fechamax, String fechaestmin, String fechaestmax, 
+			Integer idestado, Integer idcargo, Integer idcanal, Integer idvalidado, String usuario);
 
 }
