@@ -30,5 +30,6 @@ public interface EntrevistadoRepository extends CrudRepository<Entrevistado,Inte
 	public List<Entrevistado> findByEstado(Integer idestado);
 	public List<Entrevistado> findByUsuario(User usuario);
 	public Page<Entrevistado> findByUsuario(User usuario, Pageable pageable);
-
+	public long countByRun(String run);
+	
 }

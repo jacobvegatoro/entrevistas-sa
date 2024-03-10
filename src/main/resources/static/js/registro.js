@@ -27,7 +27,7 @@ $(document).ready(function(){
                 dataType:"json",
                 success: function(data)
                 {
-					if (data.length > 0){
+					if (data.mensaje != "0"){
 						response = false;
 						$("#run").focus();
 					}

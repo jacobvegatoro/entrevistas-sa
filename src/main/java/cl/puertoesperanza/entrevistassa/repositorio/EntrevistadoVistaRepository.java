@@ -30,6 +30,10 @@ public interface EntrevistadoVistaRepository extends
 
 	List<EntrevistadoVista> findByUsername(String username);
 
+	List<EntrevistadoVista> findByUsernameOrderByIdEntrevistadoAsc(String username);
+
+	List<EntrevistadoVista> findAllByOrderByIdEntrevistadoAsc();
+
 	Page<EntrevistadoVista> findByUsername(String username, Pageable pageable);
 
 	@Query (

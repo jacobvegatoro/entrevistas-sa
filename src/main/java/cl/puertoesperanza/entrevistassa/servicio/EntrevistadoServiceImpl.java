@@ -67,6 +67,11 @@ public class EntrevistadoServiceImpl implements EntrevistadoService {
 	}
 
 	@Override
+	public long contarEntrevistadosPorRun(String run) {
+		return entrevistadoRepositorio.countByRun(run);
+	}
+
+	@Override
 	public Entrevistado obtenerEntrevistadoPorId(Integer idEntrevistado) {
 		Optional<Entrevistado> entrevistado = entrevistadoRepositorio.findById(idEntrevistado);
 		return entrevistado.get();

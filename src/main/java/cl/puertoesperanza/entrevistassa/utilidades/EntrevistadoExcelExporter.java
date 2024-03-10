@@ -125,11 +125,11 @@ public class EntrevistadoExcelExporter {
         cell.setCellStyle(style);
     }
     
-    private void createCellInteger(Row row, int columnCount, Integer value, Cell cell) {
+    /*private void createCellInteger(Row row, int columnCount, Integer value, Cell cell) {
         //sheet.autoSizeColumn(columnCount);
         cell = row.createCell(columnCount);
         cell.setCellValue(value);
-    }
+    }*/
     
     private void createCellIntegerV2(Row row, int columnCount, Integer value, CellStyle style, Cell cell) {
         //sheet.autoSizeColumn(columnCount);
@@ -138,20 +138,21 @@ public class EntrevistadoExcelExporter {
         cell.setCellStyle(style);
     }
 
-    private void createCellString(Row row, int columnCount, String value, Cell cell) {
+    /*private void createCellString(Row row, int columnCount, String value, Cell cell) {
         //sheet.autoSizeColumn(columnCount);
         cell = row.createCell(columnCount);
         cell.setCellValue(value);
         //cell.setCellStyle(style);
-    }
+    }*/
 
     private void createCellStringV2(Row row, int columnCount, String value, CellStyle style, Cell cell) {
         //sheet.autoSizeColumn(columnCount);
         cell = row.createCell(columnCount);
         cell.setCellValue(value);
-        //cell.setCellStyle(style);
+        cell.setCellStyle(style);
     }
 
+    /*
     private void createCellDate(Row row, int columnCount, String value, Cell cell) {
         cell = row.createCell(columnCount);
         
@@ -171,7 +172,7 @@ public class EntrevistadoExcelExporter {
         }
         
         //cell.setCellStyle(style);
-    }
+    }*/
 
     private void createCellDateV2(Row row, int columnCount, String value, CellStyle style, Cell cell) {
         cell = row.createCell(columnCount);
@@ -239,7 +240,7 @@ public class EntrevistadoExcelExporter {
             createCellStringV2(row, columnCount++, evista.getEmpresa(), style, celda);
             createCellStringV2(row, columnCount++, evista.getEstadoValidado(), style, celda);
             style = styleDate;
-            createCellDateV2(row, columnCount++, evista.getFechaEstado(), styleDate, celda);
+            createCellDateV2(row, columnCount++, evista.getFechaEstado(), style, celda);
             style = styleRegular;
             createCellStringV2(row, columnCount++, evista.getEstado(), style, celda);
             createCellStringV2(row, columnCount++, evista.getNombreInstalacion(), style, celda);

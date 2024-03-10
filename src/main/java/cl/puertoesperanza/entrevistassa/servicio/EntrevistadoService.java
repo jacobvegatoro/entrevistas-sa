@@ -17,6 +17,7 @@ public interface EntrevistadoService {
 	boolean editarEntrevistadoMasivo(List<Entrevistado> listaEntrevistado);
 	boolean eliminarEntrevistado(Integer idEntrevistado);
 	List<Entrevistado> obtenerEntrevistadosPorRun(String run);
+	long contarEntrevistadosPorRun(String run);
 	Entrevistado obtenerEntrevistadoPorId(Integer idEntrevistado);
 	long getPageCount(long registrosTotales, long registrosPorPagina);
 	List<Entrevistado> getPage(Integer pagina, Integer cantidad);

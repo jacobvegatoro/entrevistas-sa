@@ -24,12 +24,14 @@ public class EntrevistadoVistaServiceImpl implements EntrevistadoVistaService {
 
 	@Override
 	public List<EntrevistadoVista> obtenerEntrevistadosVista() {
-		return (List<EntrevistadoVista>) entrevistadoVistaRepositorio.findAll();
+		//return (List<EntrevistadoVista>) entrevistadoVistaRepositorio.findAll();
+		return (List<EntrevistadoVista>) entrevistadoVistaRepositorio.findAllByOrderByIdEntrevistadoAsc();
 	}
 
 	@Override
 	public List<EntrevistadoVista> obtenerEntrevistadosVistaUsuario(String usuario) {
-		return (List<EntrevistadoVista>) entrevistadoVistaRepositorio.findByUsername(usuario);
+		//return (List<EntrevistadoVista>) entrevistadoVistaRepositorio.findByUsername(usuario);
+		return (List<EntrevistadoVista>) entrevistadoVistaRepositorio.findByUsernameOrderByIdEntrevistadoAsc(usuario);
 	}
 
 	@Override

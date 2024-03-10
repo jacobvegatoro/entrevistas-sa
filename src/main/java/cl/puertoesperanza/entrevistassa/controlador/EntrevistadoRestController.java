@@ -1,16 +1,18 @@
 package cl.puertoesperanza.entrevistassa.controlador;
 
-import java.util.List;
+//import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+//import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
+//import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import cl.puertoesperanza.entrevistassa.modelo.Entrevistado;
+import cl.puertoesperanza.entrevistassa.dto.Mensaje;
+//import cl.puertoesperanza.entrevistassa.modelo.Entrevistado;
 import cl.puertoesperanza.entrevistassa.servicio.EntrevistadoService;
 
 @RestController
@@ -21,10 +23,13 @@ public class EntrevistadoRestController {
 	private EntrevistadoService entrevistadoServicio;
 	
 	@GetMapping("/{run}")
-	@ResponseStatus(HttpStatus.OK)
-	public List<Entrevistado> buscarPorRun(@PathVariable String run) {
-		List<Entrevistado> lentrevistados = entrevistadoServicio.obtenerEntrevistadosPorRun(run);
-		return lentrevistados;
+	//@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<?> buscarPorRun(@PathVariable String run) {
+		//List<Entrevistado> lentrevistados = entrevistadoServicio.obtenerEntrevistadosPorRun(run);
+		Mensaje mensaje = new Mensaje();
+		String texto = "" + entrevistadoServicio.contarEntrevistadosPorRun(run);
+		mensaje.setMensaje(texto);
+		return ResponseEntity.ok(mensaje);
 	}
 
 }

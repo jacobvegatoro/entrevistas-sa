@@ -50,12 +50,13 @@ import cl.puertoesperanza.entrevistassa.busqueda.ParentescoHashmap;
 import cl.puertoesperanza.entrevistassa.busqueda.PeriodoHashmap;
 import cl.puertoesperanza.entrevistassa.busqueda.PresentacionHashmap;
 import cl.puertoesperanza.entrevistassa.busqueda.PrevisionHashmap;
-import cl.puertoesperanza.entrevistassa.busqueda.ReclutadorHashmap;
+//import cl.puertoesperanza.entrevistassa.busqueda.ReclutadorHashmap;
 import cl.puertoesperanza.entrevistassa.busqueda.SaludHashmap;
 import cl.puertoesperanza.entrevistassa.busqueda.SeguroCovidHashmap;
 import cl.puertoesperanza.entrevistassa.busqueda.ServicioHashmap;
 import cl.puertoesperanza.entrevistassa.busqueda.TallaHashmap;
 import cl.puertoesperanza.entrevistassa.busqueda.TipoCuentaHashmap;
+import cl.puertoesperanza.entrevistassa.busqueda.UsuarioHashmap;
 import cl.puertoesperanza.entrevistassa.busqueda.ValidadoHashmap;
 import cl.puertoesperanza.entrevistassa.modelo.Cargo;
 import cl.puertoesperanza.entrevistassa.modelo.Cliente;
@@ -94,6 +95,7 @@ import cl.puertoesperanza.entrevistassa.servicio.TipoCuentaService;
 import cl.puertoesperanza.entrevistassa.servicio.UsuarioService;
 import cl.puertoesperanza.entrevistassa.servicio.ValidadoService;
 import cl.puertoesperanza.entrevistassa.utilidades.EntrevistadoExcelExporter;
+import cl.puertoesperanza.entrevistassa.utilidades.FastExcelSimpleWrite;
 import cl.puertoesperanza.entrevistassa.utilidades.Util;
 
 @Controller
@@ -1214,8 +1216,11 @@ public class EntrevistadoController {
         EntrevistadoHashmap lentrevistados = new EntrevistadoHashmap();
         lentrevistados.llenar(entrevistadoServicio.obtenerEntrevistados());
 
-        ReclutadorHashmap lreclutadores = new ReclutadorHashmap();
-        lreclutadores.llenar(reclutadorServicio.obtenerReclutadores());
+        //ReclutadorHashmap lreclutadores = new ReclutadorHashmap();
+        //lreclutadores.llenar(reclutadorServicio.obtenerReclutadores());
+
+        UsuarioHashmap lusuarios = new UsuarioHashmap();
+        lusuarios.llenar(usuarioServicio.obtenerUsuarios());
 
         ClienteHashmap lclientes = new ClienteHashmap();
         lclientes.llenar(clienteServicio.obtenerClientes());
@@ -1238,7 +1243,8 @@ public class EntrevistadoController {
         //int valorNoExiste = 0;
 
 		String strFechaIngreso = "";
-		String strReclutador = "";
+		//String strReclutador = "";
+		String strUsuario = "";
 		String run = "";
 		String strCliente = "";
 		String nombres = "";
@@ -1292,10 +1298,15 @@ public class EntrevistadoController {
 				else
 					strFechaIngreso = "";
 				
-				if (row.getCell(2) != null)
+				/*if (row.getCell(2) != null)
 					strReclutador = row.getCell(2).toString().trim();
 				else
-					strReclutador = "";
+					strReclutador = "";*/
+				
+				if (row.getCell(2) != null)
+					strUsuario = row.getCell(2).toString().trim();
+				else
+					strUsuario = "";
 				
 				if (row.getCell(4) != null)
 					strCliente = row.getCell(4).toString().trim();
@@ -1367,11 +1378,26 @@ public class EntrevistadoController {
 						registroOk = false;
 					}
 					
-					if (lreclutadores.busca(strReclutador) != null)
+					/*if (lreclutadores.busca(strReclutador) != null)
 						entr.setReclutador(lreclutadores.busca(strReclutador));
 					else
-						registroOk = false;
+						registroOk = false;*/
 					
+					if (roluser.equals("ROLE_USER")) {
+						if (entr.getUsuario().getUsername().equals(user.getUsername())) {
+							entr.setUsuario(usuarioAcceso);
+						}
+						else {
+							registroOk = false;
+						}
+					}
+					else {
+						if (lusuarios.busca(strUsuario) != null)
+							entr.setUsuario(lusuarios.busca(strUsuario));
+						else
+							registroOk = false;
+					}
+
 					if (Util.validarRut(run)) {
 						if (Util.formatear(run).equals(run)) {
 							entr.setRun(run);							
@@ -1426,10 +1452,10 @@ public class EntrevistadoController {
 					else
 						registroOk = false;
 					
-					if (lreclutadores.busca(strReclutador) != null)
+					/*if (lreclutadores.busca(strReclutador) != null)
 						entr.setReclutador(lreclutadores.busca(strReclutador));
 					else
-						registroOk = false;
+						registroOk = false;*/
 
 					if (obsRegistro.length() > 0)
 						entr.setObservacionRegistro(obsRegistro);
@@ -1447,11 +1473,21 @@ public class EntrevistadoController {
 					entr.setFechaIngreso(fechaIngreso);
 					entr.setUsuario(usuarioAcceso);
 					
-					if (lreclutadores.busca(strReclutador) != null)
+					/*if (lreclutadores.busca(strReclutador) != null)
 						entr.setReclutador(lreclutadores.busca(strReclutador));
 					else
-						registroOk = false;
-
+						registroOk = false;*/
+					
+					if (roluser.equals("ROLE_USER")) {
+						entr.setUsuario(usuarioAcceso);
+					}
+					else {
+						if (lusuarios.busca(strUsuario) != null)
+							entr.setUsuario(lusuarios.busca(strUsuario));
+						else
+							registroOk = false;
+					}
+					
 					if (Util.validarRut(run)) {
 						if (Util.formatear(run).equals(run)) {
 							entr.setRun(run);							
@@ -1506,10 +1542,10 @@ public class EntrevistadoController {
 					else
 						registroOk = false;
 					
-					if (lreclutadores.busca(strReclutador) != null)
+					/*if (lreclutadores.busca(strReclutador) != null)
 						entr.setReclutador(lreclutadores.busca(strReclutador));
 					else
-						registroOk = false;
+						registroOk = false;*/
 
 					if (obsRegistro.length() > 0)
 						entr.setObservacionRegistro(obsRegistro);
@@ -1525,7 +1561,7 @@ public class EntrevistadoController {
 				if (!registroOk) {
 					EntrevistadoVista entrx = new EntrevistadoVista();
 					entrx.setFechaIngreso(strFechaIngreso);
-					entrx.setNombreReclutador(strReclutador);
+					//entrx.setNombreReclutador(strReclutador);
 					entrx.setRun(run);
 					entrx.setNombreCliente(strCliente);
 					entrx.setNombres(nombres);
@@ -1536,7 +1572,7 @@ public class EntrevistadoController {
 					entrx.setNombreCargo(strCargo);
 					entrx.setNombreComuna(strComuna);
 					entrx.setNombreCanal(strCanal);
-					entrx.setUsername(user.getUsername());
+					entrx.setUsername(strUsuario);
 					entErroneos.add(entrx);
 					regErroneos++;
 				}
@@ -1653,8 +1689,11 @@ public class EntrevistadoController {
         EntrevistadoHashmap lentrevistados = new EntrevistadoHashmap();
         lentrevistados.llenar(entrevistadoServicio.obtenerEntrevistados());
 
-        ReclutadorHashmap lreclutadores = new ReclutadorHashmap();
-        lreclutadores.llenar(reclutadorServicio.obtenerReclutadores());
+        //ReclutadorHashmap lreclutadores = new ReclutadorHashmap();
+        //lreclutadores.llenar(reclutadorServicio.obtenerReclutadores());
+        
+        UsuarioHashmap lusuarios = new UsuarioHashmap();
+        lusuarios.llenar(usuarioServicio.obtenerUsuarios());
 
         ClienteHashmap lclientes = new ClienteHashmap();
         lclientes.llenar(clienteServicio.obtenerClientes());
@@ -1740,7 +1779,8 @@ public class EntrevistadoController {
     		}
 
     		String strFechaIngreso = "";
-    		String strReclutador = "";
+    		//String strReclutador = "";
+    		String strUsuario = "";
     		String run = "";
     		String strCliente = "";
     		String nombres = "";
@@ -1817,10 +1857,15 @@ public class EntrevistadoController {
 				else
 					strFechaIngreso = "";
 
-				if (row.getCell(2) != null)
+				/*if (row.getCell(2) != null)
 					strReclutador = row.getCell(2).toString().trim();
 				else
-					strReclutador = "";
+					strReclutador = "";*/
+
+				if (row.getCell(2) != null)
+					strUsuario = row.getCell(2).toString().trim();
+				else
+					strUsuario = "";
 
 				if (row.getCell(4) != null)
 					strCliente = row.getCell(4).toString().trim();
@@ -2073,18 +2118,33 @@ public class EntrevistadoController {
 
 				if (entr != null) {
 					
-					if (!entr.getUsuario().getUsername().equals(user.getUsername()) && roluser.equals("ROLE_USER")) {
+					/*if (!entr.getUsuario().getUsername().equals(user.getUsername()) && roluser.equals("ROLE_USER")) {
 						registroOk = false;
-					}
+					}*/
 
 					//Parte 1 de 5 (11 campos)
 					
 					entr.setFechaIngreso(fechaIngreso);
 					
-					if (lreclutadores.busca(strReclutador) != null)
+					/*if (lreclutadores.busca(strReclutador) != null)
 						entr.setReclutador(lreclutadores.busca(strReclutador));
 					else
-						registroOk = false;
+						registroOk = false;*/
+					
+					if (roluser.equals("ROLE_USER")) {
+						if (entr.getUsuario().getUsername().equals(user.getUsername())) {
+							entr.setUsuario(usuarioAcceso);
+						}
+						else {
+							registroOk = false;
+						}
+					}
+					else {
+						if (lusuarios.busca(strUsuario) != null)
+							entr.setUsuario(lusuarios.busca(strUsuario));
+						else
+							registroOk = false;
+					}
 					
 					//No se actualiza el RUN de un registro ya existente
 					/*if (Util.validarRut(run)) {
@@ -2474,13 +2534,23 @@ public class EntrevistadoController {
 					//Parte 1 de 4 (11 campos)
 					
 					entr.setFechaIngreso(fechaIngreso);
-					entr.setUsuario(usuarioAcceso);
+					//entr.setUsuario(usuarioAcceso);
 					
-					if (lreclutadores.busca(strReclutador) != null)
+					/*if (lreclutadores.busca(strReclutador) != null)
 						entr.setReclutador(lreclutadores.busca(strReclutador));
 					else
-						registroOk = false;
+						registroOk = false;*/
 					
+					if (roluser.equals("ROLE_USER")) {
+						entr.setUsuario(usuarioAcceso);
+					}
+					else {
+						if (lusuarios.busca(strUsuario) != null)
+							entr.setUsuario(lusuarios.busca(strUsuario));
+						else
+							registroOk = false;
+					}
+
 					if (Util.validarRut(run)) {
 						if (Util.formatear(run).equals(run)) {
 							entr.setRun(run);							
@@ -2860,7 +2930,7 @@ public class EntrevistadoController {
 				if (!registroOk) {
 					EntrevistadoVista entrx = new EntrevistadoVista();
 					entrx.setFechaIngreso(strFechaIngreso);
-					entrx.setNombreReclutador(strReclutador);
+					//entrx.setNombreReclutador(strReclutador);
 					entrx.setRun(run);
 					entrx.setNombreCliente(strCliente);
 					entrx.setNombres(nombres);
@@ -2871,7 +2941,7 @@ public class EntrevistadoController {
 					entrx.setNombreCargo(strCargo);
 					entrx.setNombreComuna(strComuna);
 					entrx.setNombreCanal(strCanal);
-					entrx.setUsername(user.getUsername());
+					entrx.setUsername(strUsuario);
 					entErroneos.add(entrx);
 					regErroneos++;
 				}
@@ -3118,16 +3188,21 @@ public class EntrevistadoController {
 			lentrevistadosvista = entrevistadoVistaServicio.obtenerEntrevistadosVista();
 		}
 
-        String fecha3 = dateFormatter.format(new Date());        
+        String fecha3 = dateFormatter.format(new Date());
         System.out.println("Despues del listado: " + fecha3);
 
-        //UserExcelExporter excelExporter = new UserExcelExporter(listaentrevistados);
-        EntrevistadoExcelExporter excelExporter = new EntrevistadoExcelExporter(lentrevistadosvista);
-
-        String fecha4 = dateFormatter.format(new Date());        
+        //EntrevistadoExcelExporter excelExporter = new EntrevistadoExcelExporter(lentrevistadosvista);
+        //excelExporter.export(response);
+        
+        //FastexcelHelper excelExporter = new FastexcelHelper();
+        //excelExporter.writeExcel();
+        
+        FastExcelSimpleWrite excelExporter = new FastExcelSimpleWrite(lentrevistadosvista);
+        excelExporter.writeExcel(response);
+        
+        String fecha4 = dateFormatter.format(new Date());
         System.out.println("Fin: " + fecha4);
-
-        excelExporter.export(response);
+        
     }
 
     @GetMapping("/exportar/filtro")
@@ -3429,10 +3504,12 @@ public class EntrevistadoController {
 		long cantTotal = 0;
 		
 		if (roluser.equals("ROLE_USER")) {
-			cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVistaUsuario(user.getUsername()).size();
+			//cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVistaUsuario(user.getUsername()).size();
+			cantTotal = entrevistadoVistaServicio.obtenerCantidadRegistrosUsuario(user.getUsername());
 		}
 		else {
-			cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVista().size();
+			//cantTotal = entrevistadoVistaServicio.obtenerEntrevistadosVista().size();
+			cantTotal = entrevistadoVistaServicio.obtenerCantidadRegistros();
 		}
 		
 		modelAndView.addObject("paginas", Util.getArregloPaginas(p, (int) entrevistadoVistaServicio.getPageCount(cantTotal, this.paginacion)));
