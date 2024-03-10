@@ -11,9 +11,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import cl.puertoesperanza.entrevistassa.modelo.EntrevistadoVista;
-
 import cl.puertoesperanza.entrevistassa.busqueda.SearchSpecifications;
+import cl.puertoesperanza.entrevistassa.modelo.EntrevistadoVista;
 
 @Repository
 public interface EntrevistadoVistaRepository extends 
@@ -26,7 +25,6 @@ public interface EntrevistadoVistaRepository extends
 			value = "select * from vw_entrevistado e where e.fecha_ingreso_rv >= :fechaingreso", 
 			nativeQuery = true)
 	List<EntrevistadoVista> findIngresoFiltrado(@Param("fechaingreso") String fechaingreso);
-
 
 	List<EntrevistadoVista> findByUsername(String username);
 

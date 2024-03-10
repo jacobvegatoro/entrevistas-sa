@@ -118,9 +118,12 @@ public class EntrevistadoVistaServiceImpl implements EntrevistadoVistaService {
 			searchSpecifications.add(new SearchCriteria("validadoId",idvalidado, SearchOperation.EQUAL));
 		}
 
-		return entrevistadoVistaRepositorio.findAll(searchSpecifications);
+		//return entrevistadoVistaRepositorio.findAllByOrderByIdEntrevistadoAsc(searchSpecifications);
+		Sort sort = Sort.by(Sort.Direction.ASC, "idEntrevistado");
+		return entrevistadoVistaRepositorio.findAll(searchSpecifications, sort);
 		//return (List<Entrevistado>) entrevistadoRepositorio.findAll();
 	}
+	
 	/*
 	@Override
 	public List<EntrevistadoVista> buscarEntrevistadosVista(String empresa, 
@@ -269,7 +272,9 @@ public class EntrevistadoVistaServiceImpl implements EntrevistadoVistaService {
 
 		searchSpecifications.add(new SearchCriteria("username",usuario, SearchOperation.EQUAL));
 
-		return entrevistadoVistaRepositorio.findAll(searchSpecifications);
+		Sort sort = Sort.by(Sort.Direction.ASC, "idEntrevistado");
+		return entrevistadoVistaRepositorio.findAll(searchSpecifications, sort);
+		//return entrevistadoVistaRepositorio.findAll(searchSpecifications);
 		//return (List<Entrevistado>) entrevistadoRepositorio.findAll();
 	}
 	

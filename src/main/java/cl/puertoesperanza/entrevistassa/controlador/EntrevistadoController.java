@@ -94,7 +94,7 @@ import cl.puertoesperanza.entrevistassa.servicio.TallaService;
 import cl.puertoesperanza.entrevistassa.servicio.TipoCuentaService;
 import cl.puertoesperanza.entrevistassa.servicio.UsuarioService;
 import cl.puertoesperanza.entrevistassa.servicio.ValidadoService;
-import cl.puertoesperanza.entrevistassa.utilidades.EntrevistadoExcelExporter;
+//import cl.puertoesperanza.entrevistassa.utilidades.EntrevistadoExcelExporter;
 import cl.puertoesperanza.entrevistassa.utilidades.FastExcelSimpleWrite;
 import cl.puertoesperanza.entrevistassa.utilidades.Util;
 
@@ -1277,7 +1277,7 @@ public class EntrevistadoController {
     			regTotales++;
 				XSSFRow row = sheet.getRow(i);
 
-				System.out.println("Vamos en la fila: " + i);
+				//System.out.println("Vamos en la fila: " + i);
 				//int entrevistadoId = Math.round(Float.parseFloat(row.getCell(0).toString()));
 				
 				if (row.getCell(3) != null) {
@@ -1354,7 +1354,8 @@ public class EntrevistadoController {
 					strCanal = "";
 				
 				Date fechaIngreso = new Date();
-				SimpleDateFormat ft = new SimpleDateFormat ("dd-MMM-yyyy");
+				//SimpleDateFormat ft = new SimpleDateFormat ("dd-MMM-yyyy");
+				SimpleDateFormat ft = new SimpleDateFormat ("dd-MM-yyyy");
 				
 				try 
 				{
@@ -2100,7 +2101,8 @@ public class EntrevistadoController {
 					strEntrevistador = "";
 				
 				Date fechaIngreso = new Date();
-				SimpleDateFormat ft = new SimpleDateFormat ("dd-MMM-yyyy");		
+				//SimpleDateFormat ft = new SimpleDateFormat ("dd-MMM-yyyy");
+				SimpleDateFormat ft = new SimpleDateFormat ("dd-MM-yyyy");
 				
 				try 
 				{
@@ -3194,9 +3196,6 @@ public class EntrevistadoController {
         //EntrevistadoExcelExporter excelExporter = new EntrevistadoExcelExporter(lentrevistadosvista);
         //excelExporter.export(response);
         
-        //FastexcelHelper excelExporter = new FastexcelHelper();
-        //excelExporter.writeExcel();
-        
         FastExcelSimpleWrite excelExporter = new FastExcelSimpleWrite(lentrevistadosvista);
         excelExporter.writeExcel(response);
         
@@ -3356,9 +3355,12 @@ public class EntrevistadoController {
 
 		System.out.println("Listado completo de entrevistados filtrado obtenido");
         
-        EntrevistadoExcelExporter excelExporter = new EntrevistadoExcelExporter(lentrevistasvistafiltro);
+        //EntrevistadoExcelExporter excelExporter = new EntrevistadoExcelExporter(lentrevistasvistafiltro);
+        //excelExporter.export(response);
         
-        excelExporter.export(response);
+        FastExcelSimpleWrite excelExporter = new FastExcelSimpleWrite(lentrevistasvistafiltro);
+        excelExporter.writeExcel(response);
+
     }
 
 	@PostMapping("/eliminar")
